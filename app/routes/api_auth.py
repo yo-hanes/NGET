@@ -40,16 +40,17 @@ async def login(
         if not user['is_active']:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Account is inactive")
             
-        # Update last login
-        await db.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?", (user['user_id'],))
-        
-        # Log activity
-        ip_address = request.client.host if request.client else "unknown"
-        await db.execute(
-            "INSERT INTO activity_logs (actor_id, actor_name, action_type, details, ip_address) VALUES (?, ?, ?, ?, ?)",
-            (user['user_id'], user['user_name'], "USER_LOGIN", "User logged in", ip_address)
-        )
-        await db.commit()
+        # Update last login & log activity (non-fatal if write fails)
+        try:
+            await db.execute("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = ?", (user['user_id'],))
+            ip_address = request.client.host if request.client else "unknown"
+            await db.execute(
+                "INSERT INTO activity_logs (actor_id, actor_name, action_type, details, ip_address) VALUES (?, ?, ?, ?, ?)",
+                (user['user_id'], user['user_name'], "USER_LOGIN", "User logged in", ip_address)
+            )
+            await db.commit()
+        except Exception:
+            pass
         
         permissions = await get_user_permissions(db, user['role'])
         token = create_session_token(user['user_id'], user['user_name'], user['role'])

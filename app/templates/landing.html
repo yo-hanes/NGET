@@ -775,8 +775,8 @@
                 if (res.ok) {
                     window.location.href = '/';
                 } else {
-                    const data = await res.json();
-                    alert(data.detail || 'Login failed');
+                    const data = await res.json().catch(() => ({}));
+                    alert(data.detail || `Login failed (Status ${res.status})`);
                 }
             } catch (err) {
                 alert('Connection error: ' + err.message);
@@ -803,8 +803,8 @@
                 if (res.ok) {
                     window.location.href = '/';
                 } else {
-                    const data = await res.json();
-                    errBox.textContent = data.detail || 'Invalid username or password';
+                    const data = await res.json().catch(() => ({}));
+                    errBox.textContent = data.detail || (res.status === 401 ? 'Invalid username or password' : `Server error (${res.status}). Please try again.`);
                     errBox.classList.remove('hidden');
                 }
             } catch (err) {
@@ -835,19 +835,19 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                const data = await res.json();
+                const data = await res.json().catch(() => ({}));
                 
                 if (res.ok) {
                     document.getElementById('card-name').textContent = data.full_name;
-                    document.getElementById('card-id').textContent = 'ID: ' + data.member_id;
-                    document.getElementById('card-region').textContent = `${data.region} &bull; ${data.woreda}`;
-                    document.getElementById('card-role').textContent = data.skills;
+                    document.getElementById('card-id').textContent = 'ID: ' + (data.member_id || '');
+                    document.getElementById('card-region').textContent = `${data.region || ''} &bull; ${data.woreda || ''}`;
+                    document.getElementById('card-role').textContent = data.skills || '';
 
                     document.getElementById('volunteer-form-container').classList.add('hidden');
                     document.getElementById('volunteer-card-container').classList.remove('hidden');
                     lucide.createIcons();
                 } else {
-                    alert(data.detail || 'Registration failed');
+                    alert(data.detail || `Registration failed (Status ${res.status})`);
                 }
             } catch (err) {
                 alert('Connection error: ' + err.message);
