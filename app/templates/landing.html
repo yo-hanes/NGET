@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Negarit ET — National Disaster Intelligence & Community Early Warning</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#060D1A',
+                            dark: '#0A1124',
+                            card: 'rgba(15, 23, 42, 0.75)',
+                            blue: '#0078D4',
+                            blueDark: '#005A9E',
+                            cyan: '#00E5FF',
+                            amber: '#F59E0B',
+                            red: '#EF4444',
+                            green: '#10B981',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #060D1A;
+            color: #F8FAFC;
+            overflow-x: hidden;
+        }
+        
+        .acrylic-card {
+            background: rgba(13, 20, 36, 0.72);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        .acrylic-card-hover:hover {
+            border-color: rgba(0, 229, 255, 0.4);
+            transform: translateY(-2px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .gradient-glow {
+            background: radial-gradient(circle at 50% 0%, rgba(0, 120, 212, 0.22) 0%, rgba(0, 229, 255, 0.08) 35%, transparent 70%);
+        }
+
+        .badge-subtle {
+            background: rgba(0, 229, 255, 0.1);
+            color: #00E5FF;
+            border: 1px solid rgba(0, 229, 255, 0.25);
+        }
+
+        .hero-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060D1A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 229, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen hero-pattern text-slate-100 flex flex-col justify-between">
+
+    <!-- Top Sticky Navbar -->
+    <header class="sticky top-0 z-40 bg-[#060D1A]/85 backdrop-blur-xl border-b border-white/10 px-4 lg:px-8 py-3.5 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Brand -->
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-cyan flex items-center justify-center shadow-lg shadow-brand-cyan/20 group-hover:scale-105 transition-transform">
+                    <span class="text-xl">🇪🇹</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-lg tracking-tight text-white">Negarit ET</span>
+                        <span class="badge-subtle text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">NATIONAL EARLY WARNING</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 font-medium">Federal Disaster Intelligence & Community Mesh</div>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm text-slate-300 font-medium">
+                <a href="#how-it-works" class="hover:text-brand-cyan transition-colors">How Negarit Works</a>
+                <a href="#disasters" class="hover:text-brand-cyan transition-colors">4 Disaster Models</a>
+                <a href="#community-impact" class="hover:text-brand-cyan transition-colors">Impact Gallery</a>
+                <a href="#volunteers" class="hover:text-brand-cyan transition-colors">Volunteer Network</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <button onclick="openVolunteerModal()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-brand-blue to-brand-cyan text-slate-950 font-bold text-xs sm:text-sm hover:shadow-lg hover:shadow-brand-cyan/20 hover:opacity-95 transition-all flex items-center gap-2">
+                    <i data-lucide="heart-handshake" class="w-4 h-4"></i>
+                    <span>Be a Member</span>
+                </button>
+
+                {% if user %}
+                <a href="/" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-cyan"></i>
+                    <span>Open Platform</span>
+                </a>
+                {% else %}
+                <button onclick="openLoginModal()" class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold text-xs sm:text-sm transition-all flex items-center gap-2">
+                    <i data-lucide="key-round" class="w-4 h-4 text-brand-cyan"></i>
+                    <span>Member Login</span>
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        <!-- Hero Section -->
+        <section class="relative pt-12 pb-20 px-4 lg:px-8 gradient-glow overflow-hidden">
+            <div class="max-w-5xl mx-auto text-center space-y-6">
+                
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-subtle text-xs font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-brand-cyan animate-pulse"></span>
+                    <span>AI Telemetry &bull; Government Authorization &bull; Community Mobilization</span>
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                    Predict The Crisis. <br class="hidden sm:inline" />
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-blue-400 to-indigo-400">
+                        Verify With Community.
+                    </span>
+                    Mobilize The Aid.
+                </h1>
+
+                <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed font-normal">
+                    Negarit predicts the <strong>4 natural disasters</strong> (Drought, Flood, Landslides, Earthquakes) using live climate forecasts and seismic telemetry. 
+                    Before warnings go out, <strong>emergency SMS must be federally approved</strong>. When disasters strike, we cross-check telemetry with our trusted <strong>Negarit Community volunteers</strong> on the ground, then grant relief agencies access to live data and connect them directly with local members to facilitate hospitality, shelter, food, and emergency aid.
+                </p>
+
+                <!-- Live Metrics Ticker -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto pt-4 text-left">
+                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Registered Volunteers</div>
+                        <div class="text-2xl sm:text-3xl font-bold font-mono text-brand-cyan mt-1" id="hero-volunteer-count">14,850+</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Across 12 regions</div>
+                    </div>
+                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Natural Hazards</div>
+                        <div class="text-2xl sm:text-3xl font-bold font-mono text-white mt-1">4 Models</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Telemetry-calculated</div>
+                    </div>
+                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Verification Accuracy</div>
+                        <div class="text-2xl sm:text-3xl font-bold font-mono text-emerald-400 mt-1">100%</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Cross-checked ground truth</div>
+                    </div>
+                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Active Woredas</div>
+                        <div class="text-2xl sm:text-3xl font-bold font-mono text-amber-400 mt-1">48 Zones</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Mesh response ready</div>
+                    </div>
+                </div>
+
+                <!-- CTAs -->
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+                    <button onclick="openLoginModal()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-slate-950 font-bold text-sm sm:text-base hover:shadow-xl hover:shadow-brand-cyan/25 hover:scale-[1.02] transition-all flex items-center gap-2.5">
+                        <i data-lucide="play" class="w-5 h-5 fill-slate-950"></i>
+                        <span>Explore Live Platform Demo (Judge Personas)</span>
+                    </button>
+                    <button onclick="openVolunteerModal()" class="px-6 py-3 rounded-xl bg-card border border-white/20 hover:border-brand-cyan/60 text-white font-semibold text-sm sm:text-base transition-all flex items-center gap-2">
+                        <i data-lucide="user-plus" class="w-5 h-5 text-brand-cyan"></i>
+                        <span>Join As Community Member</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- The 4-Step Operational Narrative -->
+        <section id="how-it-works" class="py-16 px-4 lg:px-8 border-t border-white/5 bg-[#081022]/60">
+            <div class="max-w-7xl mx-auto space-y-12">
+                <div class="text-center space-y-3">
+                    <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">The Negarit Architecture</div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">How Negarit Operates in 4 Steps</h2>
+                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                        From raw environmental telemetry to verified citizen action, every step is built to save lives while preventing false alarm panic.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Step 1 -->
+                    <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 text-brand-cyan flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                                01
+                            </div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <span>AI Predicts 4 Disasters</span>
+                            </h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Analyzes real-time Open-Meteo 16-day climate models and USGS seismic feeds to calculate hazard risk scores for <strong>Drought, Flood, Landslides, and Earthquakes</strong> before they unfold.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-brand-cyan font-mono flex items-center gap-1.5">
+                            <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 16-Day Forecast &amp; Rift Geophysics
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                                02
+                            </div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <span>Federal SMS Approval</span>
+                            </h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Early warning cell broadcasts cannot be sent automatically. Federal government officials review drafted messages, inspect populations at risk, and <strong>must authorize</strong> before public release.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-amber-400 font-mono flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Strict Verification Guardrail
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                                03
+                            </div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <span>Verify With Community</span>
+                            </h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Agencies are NOT notified just for hypothetical forecasts. When disaster strikes and reports come in, we cross-check weather data and <strong>verify with our local volunteer members</strong> on the ground.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-emerald-400 font-mono flex items-center gap-1.5">
+                            <i data-lucide="users" class="w-3.5 h-3.5"></i> Ground-Truth Volunteer Mesh
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                                04
+                            </div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <span>Deploy Aid &amp; Hospitality</span>
+                            </h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Once verified, we grant emergency agencies access to our GIS maps and weather telemetry, connecting them directly with local volunteer members to coordinate <strong>hospitality, food, and shelter</strong>.
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-purple-400 font-mono flex items-center gap-1.5">
+                            <i data-lucide="truck" class="w-3.5 h-3.5"></i> Seamless Agency-Community Aid
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The 4 Natural Disaster Models (Clean Grid) -->
+        <section id="disasters" class="py-16 px-4 lg:px-8 border-t border-white/5">
+            <div class="max-w-7xl mx-auto space-y-10">
+                <div class="text-center space-y-3">
+                    <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Predictive Engine</div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">The 4 Natural Hazards Predicted by Negarit</h2>
+                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                        Telemetry from Open-Meteo climate sensors and USGS seismic streams continuously feed these 4 models.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Hazard 1: Drought -->
+                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-amber-500">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">🌾</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">PASTORAL ARIDITY</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Drought &amp; Water Stress</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Monitors topsoil moisture (0-7cm) &lt; 0.16 m³/m³ and 16-day rainfall deficits across Afar, Somali, and Borena pastoral regions.
+                        </p>
+                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
+                            <div class="text-slate-400">Trigger: <span class="text-amber-400">Soil &lt; 0.16 m³/m³</span></div>
+                            <div class="text-slate-400">Response: <span class="text-white">Water trucking &amp; forage</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Hazard 2: Flood -->
+                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-blue-500">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">🌊</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">RIVER BASIN SURGE</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Flash Floods &amp; Inundation</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Flags 24h rainfall &gt; 25mm combined with saturated soil along Awash River, Baro Catchment, and Lake Tana tributaries.
+                        </p>
+                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
+                            <div class="text-slate-400">Trigger: <span class="text-blue-400">Rain &gt; 25mm / 24h</span></div>
+                            <div class="text-slate-400">Response: <span class="text-white">Basin evacuation &amp; shelter</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Hazard 3: Landslides -->
+                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-red-500">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">⛰️</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">SLOPE INSTABILITY</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Highland Landslides</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Calculates Highland Shear Stress (Daily Rain × 1.5 + Soil Saturation × 50) on steep mountain slopes in Gofa, North Shewa, and Simien.
+                        </p>
+                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
+                            <div class="text-slate-400">Trigger: <span class="text-red-400">Rain &gt; 85mm &amp; Saturation</span></div>
+                            <div class="text-slate-400">Response: <span class="text-white">Hillside evacuation &amp; SAR</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Hazard 4: Earthquake -->
+                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-purple-500">
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl">🌋</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">TECTONIC RIFT</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Seismic Rift Activity</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Streams USGS real-time seismic sensors along the Main Ethiopian Rift, tracking tremors and active fault shifts from Hawassa to Afar.
+                        </p>
+                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
+                            <div class="text-slate-400">Trigger: <span class="text-purple-400">Magnitude &ge; M4.5</span></div>
+                            <div class="text-slate-400">Response: <span class="text-white">Structural inspection &amp; safety</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Impact Gallery -->
+        <section id="community-impact" class="py-16 px-4 lg:px-8 border-t border-white/5 bg-[#081022]/40">
+            <div class="max-w-7xl mx-auto space-y-10">
+                <div class="text-center space-y-3">
+                    <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Community In Action</div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">How We Help The Community</h2>
+                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                        Negarit members are local volunteers who step up before, during, and after disasters to host displaced families and guide humanitarian aid.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Gallery Card 1 -->
+                    <div class="acrylic-card rounded-2xl overflow-hidden acrylic-card-hover group flex flex-col justify-between">
+                        <div class="h-48 bg-gradient-to-tr from-blue-900/60 to-slate-800 p-6 flex flex-col justify-between relative">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold bg-blue-500/20 text-brand-cyan border border-blue-500/30 w-fit">FLOOD RELIEF &bull; GAMBELA</span>
+                            <div class="text-white">
+                                <div class="text-xs text-slate-400 font-mono">Operations Log #084</div>
+                                <div class="font-bold text-base mt-1">Baro River Basin Evacuation &amp; Hospitality</div>
+                            </div>
+                            <i data-lucide="life-buoy" class="absolute right-4 bottom-4 w-20 h-20 text-white/5 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p>Local volunteers established 4 temporary highland hospitality sites for 1,200 families displaced by rising river headwaters, serving warm meals and coordinating clean drinking water.</p>
+                            <div class="text-[11px] text-brand-cyan font-semibold flex items-center gap-1.5 pt-1">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 32 Community Volunteers Deployed
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Card 2 -->
+                    <div class="acrylic-card rounded-2xl overflow-hidden acrylic-card-hover group flex flex-col justify-between">
+                        <div class="h-48 bg-gradient-to-tr from-red-950/70 to-slate-800 p-6 flex flex-col justify-between relative">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30 w-fit">SEARCH &amp; RESCUE &bull; GOFA</span>
+                            <div class="text-white">
+                                <div class="text-xs text-slate-400 font-mono">Operations Log #092</div>
+                                <div class="font-bold text-base mt-1">Highland Slope Search &amp; Evacuation Unit</div>
+                            </div>
+                            <i data-lucide="mountain" class="absolute right-4 bottom-4 w-20 h-20 text-white/5 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p>When shear stress reached critical levels, Negarit community scouts navigated steep hillside terrain to escort 45 elders and children to safe woredas before the slope failed.</p>
+                            <div class="text-[11px] text-red-400 font-semibold flex items-center gap-1.5 pt-1">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 100% Pre-Evacuation Zero Fatalities
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Card 3 -->
+                    <div class="acrylic-card rounded-2xl overflow-hidden acrylic-card-hover group flex flex-col justify-between">
+                        <div class="h-48 bg-gradient-to-tr from-amber-950/70 to-slate-800 p-6 flex flex-col justify-between relative">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 w-fit">WATER LOGISTICS &bull; AFAR</span>
+                            <div class="text-white">
+                                <div class="text-xs text-slate-400 font-mono">Operations Log #105</div>
+                                <div class="font-bold text-base mt-1">Pastoral Water Trucking &amp; Distribution</div>
+                            </div>
+                            <i data-lucide="droplet" class="absolute right-4 bottom-4 w-20 h-20 text-white/5 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p>Arriving humanitarian water convoys were met by Negarit member guides who directed tankers to the most drought-parched pastoralist settlement clusters, eliminating delays.</p>
+                            <div class="text-[11px] text-amber-400 font-semibold flex items-center gap-1.5 pt-1">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 48,000 Liters Delivered Daily
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Card 4 -->
+                    <div class="acrylic-card rounded-2xl overflow-hidden acrylic-card-hover group flex flex-col justify-between">
+                        <div class="h-48 bg-gradient-to-tr from-purple-950/70 to-slate-800 p-6 flex flex-col justify-between relative">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30 w-fit">HOSPITALITY &bull; HAWASSA</span>
+                            <div class="text-white">
+                                <div class="text-xs text-slate-400 font-mono">Operations Log #118</div>
+                                <div class="font-bold text-base mt-1">Rift Valley Tremor Hospitality Hub</div>
+                            </div>
+                            <i data-lucide="home" class="absolute right-4 bottom-4 w-20 h-20 text-white/5 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p>Following seismic swarms along the Main Ethiopian Rift, volunteer families opened community halls and provided bedding, infant care supplies, and emotional support.</p>
+                            <div class="text-[11px] text-purple-400 font-semibold flex items-center gap-1.5 pt-1">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 240 Displaced Citizens Sheltered
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Card 5 -->
+                    <div class="acrylic-card rounded-2xl overflow-hidden acrylic-card-hover group flex flex-col justify-between">
+                        <div class="h-48 bg-gradient-to-tr from-emerald-950/70 to-slate-800 p-6 flex flex-col justify-between relative">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 w-fit">FIELD WORKSHOP &bull; AMHARA</span>
+                            <div class="text-white">
+                                <div class="text-xs text-slate-400 font-mono">Operations Log #124</div>
+                                <div class="font-bold text-base mt-1">Youth Telemetry &amp; Telegram Mesh Training</div>
+                            </div>
+                            <i data-lucide="smartphone" class="absolute right-4 bottom-4 w-20 h-20 text-white/5 group-hover:scale-110 transition-transform"></i>
+                        </div>
+                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-2">
+                            <p>Training 60 high-school and university volunteers to use Negarit’s Telegram mini-app and offline SMS codes (*444#) to send verified local rain gauge reports.</p>
+                            <div class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5 pt-1">
+                                <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 60 Certified Field Reporters
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gallery Card 6: Join CTA Card -->
+                    <div class="acrylic-card rounded-2xl p-6 flex flex-col justify-between border border-brand-cyan/30 bg-gradient-to-b from-brand-blue/15 to-transparent">
+                        <div class="space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-brand-cyan/20 border border-brand-cyan/40 text-brand-cyan flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Your Community Needs You</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Join our registered volunteer community today. Help us report local events, host neighbors in times of crisis, and connect arriving relief teams with your woreda.
+                            </p>
+                        </div>
+                        <button onclick="openVolunteerModal()" class="w-full mt-6 py-3 rounded-xl bg-brand-cyan text-slate-950 font-bold text-sm hover:opacity-95 transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="user-check" class="w-4 h-4"></i>
+                            <span>Register As A Member</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Volunteer Member Network Breakdown -->
+        <section id="volunteers" class="py-16 px-4 lg:px-8 border-t border-white/5">
+            <div class="max-w-7xl mx-auto space-y-10">
+                <div class="text-center space-y-3">
+                    <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Community Roster</div>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">The Negarit Volunteer Force</h2>
+                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                        14,850+ registered members across every region of Ethiopia, standing ready to assist.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center">
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Oromia</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">4,120</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Amhara</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">3,450</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Somali</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">2,180</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Afar</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">1,640</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">South</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">1,390</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Sidama</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">920</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Tigray</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">810</div>
+                    </div>
+                    <div class="acrylic-card p-3 rounded-xl">
+                        <div class="text-xs text-slate-400 font-medium">Addis Ababa</div>
+                        <div class="text-lg font-bold font-mono text-white mt-0.5">340</div>
+                    </div>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button onclick="openVolunteerModal()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-slate-950 font-bold text-sm hover:shadow-lg hover:shadow-brand-cyan/20 transition-all inline-flex items-center gap-2">
+                        <i data-lucide="heart-handshake" class="w-4 h-4"></i>
+                        <span>Register to Become a Member</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-[#040812] py-8 px-4 lg:px-8 text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span>🇪🇹</span>
+                <span class="text-slate-300 font-semibold">Negarit ET</span>
+                <span>&bull; National Disaster Intelligence &amp; Early Warning System</span>
+            </div>
+            <div>
+                Built for Ethiopia &bull; Open-Meteo &amp; USGS Real-Time Telemetry
+            </div>
+        </div>
+    </footer>
+
+    <!-- "BE A MEMBER" REGISTRATION MODAL -->
+    <div id="volunteer-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="acrylic-card w-full max-w-lg rounded-2xl p-6 sm:p-8 relative border border-white/15 shadow-2xl">
+            <button onclick="closeVolunteerModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Registration Form State -->
+            <div id="volunteer-form-container">
+                <div class="text-center mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-brand-cyan/20 border border-brand-cyan/40 text-brand-cyan flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white">Join the Negarit Volunteer Mesh</h3>
+                    <p class="text-xs text-slate-400 mt-1">Register to protect your local community and coordinate with arriving relief teams.</p>
+                </div>
+
+                <form id="volunteer-reg-form" onsubmit="handleVolunteerSubmit(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="block text-slate-300 font-semibold mb-1">Full Name</label>
+                        <input type="text" id="vol-name" required placeholder="e.g. Almaz Bekele" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-300 font-semibold mb-1">Phone Number (SMS Alert)</label>
+                            <input type="tel" id="vol-phone" required placeholder="+251 9..." class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan">
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 font-semibold mb-1">Email (Optional)</label>
+                            <input type="email" id="vol-email" placeholder="name@domain.com" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-slate-300 font-semibold mb-1">Region</label>
+                            <select id="vol-region" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-brand-cyan">
+                                <option value="Oromia">Oromia</option>
+                                <option value="Amhara">Amhara</option>
+                                <option value="Somali">Somali</option>
+                                <option value="Afar">Afar</option>
+                                <option value="South Ethiopia">South Ethiopia (Gofa/Gamo)</option>
+                                <option value="Sidama">Sidama</option>
+                                <option value="Tigray">Tigray</option>
+                                <option value="Addis Ababa">Addis Ababa</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-300 font-semibold mb-1">Woreda / Town</label>
+                            <input type="text" id="vol-woreda" required placeholder="e.g. Sawla / Gofa" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-brand-cyan">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-300 font-semibold mb-1">Primary Volunteer Role</label>
+                        <select id="vol-skills" required class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-brand-cyan">
+                            <option value="Community Hospitality & Shelter">Community Hospitality &amp; Shelter (Host Neighbors)</option>
+                            <option value="Water & Food Logistics">Water &amp; Food Logistics (Guiding Convoys)</option>
+                            <option value="Mountain & Flood Search/Rescue">Search &amp; Rescue (First Response)</option>
+                            <option value="Field Telemetry & Eyewitness Reporting">Field Telemetry &amp; Eyewitness Reporting</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" id="vol-submit-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-blue to-brand-cyan text-slate-950 font-bold text-sm hover:opacity-95 transition-all mt-2">
+                        Complete Volunteer Registration
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success Card State -->
+            <div id="volunteer-card-container" class="hidden text-center space-y-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                    <i data-lucide="badge-check" class="w-7 h-7"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Welcome to Negarit Community!</h3>
+                <p class="text-xs text-slate-300">You are officially registered in the national disaster response mesh.</p>
+                
+                <div class="acrylic-card p-4 rounded-xl text-left border border-brand-cyan/40 bg-slate-900/90 space-y-2 mt-4">
+                    <div class="flex justify-between items-center border-b border-white/10 pb-2">
+                        <span class="text-[10px] font-mono font-bold text-brand-cyan">NEGARIT VOLUNTEER ID</span>
+                        <span class="text-xs">🇪🇹</span>
+                    </div>
+                    <div class="font-bold text-base text-white" id="card-name">--</div>
+                    <div class="text-xs text-slate-400 font-mono" id="card-id">ID: NGR-VOL-2026</div>
+                    <div class="text-[11px] text-slate-300" id="card-region">--</div>
+                    <div class="text-[11px] text-emerald-400 font-semibold" id="card-role">--</div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="closeVolunteerModal()" class="px-6 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold">
+                        Close &amp; Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- "MEMBER LOGIN / JUDGE DEMO" MODAL -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="acrylic-card w-full max-w-lg rounded-2xl p-6 sm:p-8 relative border border-white/15 shadow-2xl">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="text-3xl mb-2">🇪🇹</div>
+                <h3 class="text-xl font-bold text-white">Negarit Platform Access</h3>
+                <p class="text-xs text-slate-400 mt-1">Select a Judge Demo Persona or sign in with your member credentials.</p>
+            </div>
+
+            <!-- 1-Click Judge Demo Personas -->
+            <div class="mb-6 space-y-2.5">
+                <div class="text-[10px] font-mono font-bold text-brand-cyan uppercase tracking-wider">1-Click Judge Demo Personas</div>
+                
+                <button onclick="loginAsPersona('meron.tesfaye', 'negarit2026')" class="w-full p-2.5 rounded-xl border border-white/10 hover:border-blue-500 bg-slate-900/60 hover:bg-blue-900/20 text-left flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-blue-500/20 text-blue-400">🏛️</div>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-blue-400 transition-colors">Government Official</div>
+                            <div class="text-[10px] text-slate-400">Authorizes emergency SMS broadcasts &amp; threat briefing</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-blue-400 font-bold group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </button>
+
+                <button onclick="loginAsPersona('dawit.bekele', 'negarit2026')" class="w-full p-2.5 rounded-xl border border-white/10 hover:border-amber-500 bg-slate-900/60 hover:bg-amber-900/20 text-left flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-amber-500/20 text-amber-400">🚑</div>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-amber-400 transition-colors">Agency Operator</div>
+                            <div class="text-[10px] text-slate-400">Accesses GIS map telemetry &amp; coordinates aid with volunteers</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </button>
+
+                <button onclick="loginAsPersona('abebe.kebede', 'negarit2026')" class="w-full p-2.5 rounded-xl border border-white/10 hover:border-emerald-500 bg-slate-900/60 hover:bg-emerald-900/20 text-left flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-emerald-500/20 text-emerald-400">🤝</div>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors">Community Volunteer / Reporter</div>
+                            <div class="text-[10px] text-slate-400">Ground incident reporting, community hospitality, and local check</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-emerald-400 font-bold group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </button>
+
+                <button onclick="loginAsPersona('selam.alemu', 'negarit2026')" class="w-full p-2.5 rounded-xl border border-white/10 hover:border-purple-500 bg-slate-900/60 hover:bg-purple-900/20 text-left flex items-center justify-between group transition-all">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-purple-500/20 text-purple-400">🛡️</div>
+                        <div>
+                            <div class="text-xs font-bold text-white group-hover:text-purple-400 transition-colors">Super Admin</div>
+                            <div class="text-[10px] text-slate-400">Full system oversight, dynamic RBAC matrix &amp; immutable audit logs</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-mono text-purple-400 font-bold group-hover:translate-x-1 transition-transform">&rarr;</span>
+                </button>
+            </div>
+
+            <div class="relative my-4">
+                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
+                <div class="relative flex justify-center text-[10px] uppercase font-mono"><span class="bg-[#0D1424] px-2 text-slate-400">Or enter credentials</span></div>
+            </div>
+
+            <form id="landing-login-form" onsubmit="handleCustomLogin(event)" class="space-y-3 text-xs">
+                <div id="login-error-box" class="hidden p-2 rounded bg-red-500/10 border border-red-500/30 text-red-400 text-xs"></div>
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Username</label>
+                    <input type="text" id="login-username" required placeholder="username" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-brand-cyan">
+                </div>
+                <div>
+                    <label class="block text-slate-300 font-semibold mb-1">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-brand-cyan">
+                </div>
+                <button type="submit" id="btn-login-submit" class="w-full py-2.5 rounded-lg bg-brand-blue hover:bg-brand-blueDark text-white font-bold transition-all">
+                    Sign In to Platform
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Modals Toggle
+        function openVolunteerModal() {
+            document.getElementById('volunteer-modal').classList.remove('hidden');
+        }
+        function closeVolunteerModal() {
+            document.getElementById('volunteer-modal').classList.add('hidden');
+        }
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        // 1-Click Judge Persona Login
+        async function loginAsPersona(username, password) {
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    window.location.href = '/';
+                } else {
+                    const data = await res.json();
+                    alert(data.detail || 'Login failed');
+                }
+            } catch (err) {
+                alert('Connection error: ' + err.message);
+            }
+        }
+
+        // Custom Login Handler
+        async function handleCustomLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const errBox = document.getElementById('login-error-box');
+            errBox.classList.add('hidden');
+
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    window.location.href = '/';
+                } else {
+                    const data = await res.json();
+                    errBox.textContent = data.detail || 'Invalid username or password';
+                    errBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                errBox.textContent = 'Connection error: ' + err.message;
+                errBox.classList.remove('hidden');
+            }
+        }
+
+        // Volunteer Registration Handler
+        async function handleVolunteerSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('vol-submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Registering...';
+
+            const payload = {
+                full_name: document.getElementById('vol-name').value,
+                phone: document.getElementById('vol-phone').value,
+                email: document.getElementById('vol-email').value,
+                region: document.getElementById('vol-region').value,
+                woreda: document.getElementById('vol-woreda').value,
+                skills: document.getElementById('vol-skills').value
+            };
+
+            try {
+                const res = await fetch('/api/volunteers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    document.getElementById('card-name').textContent = data.full_name;
+                    document.getElementById('card-id').textContent = 'ID: ' + data.member_id;
+                    document.getElementById('card-region').textContent = `${data.region} &bull; ${data.woreda}`;
+                    document.getElementById('card-role').textContent = data.skills;
+
+                    document.getElementById('volunteer-form-container').classList.add('hidden');
+                    document.getElementById('volunteer-card-container').classList.remove('hidden');
+                    lucide.createIcons();
+                } else {
+                    alert(data.detail || 'Registration failed');
+                }
+            } catch (err) {
+                alert('Connection error: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Complete Volunteer Registration';
+            }
+        }
+
+        // Fetch live volunteer count
+        async function fetchLiveVolunteerCount() {
+            try {
+                const res = await fetch('/api/volunteers');
+                if (res.ok) {
+                    const data = await res.json();
+                    const el = document.getElementById('hero-volunteer-count');
+                    if (el && data.total_count) {
+                        el.textContent = data.total_count.toLocaleString() + '+';
+                    }
+                }
+            } catch (e) {}
+        }
+        fetchLiveVolunteerCount();
+    </script>
+</body>
+</html>
+

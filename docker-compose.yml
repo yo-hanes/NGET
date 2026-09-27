@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  negarit-et:
+    container_name: negarit-et-app
+    build: .
+    ports:
+      - "8010:8000"
+    volumes:
+      - ./negarit.db:/app/negarit.db
+      - ./app:/app/app
+      - ./static:/app/static
+    env_file:
+      - .env
+    restart: unless-stopped

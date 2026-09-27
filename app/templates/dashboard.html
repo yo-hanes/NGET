@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Negarit ET</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI Variable', 'Segoe UI', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            navy: '#0A0D12',
+                            navyLight: '#161B22',
+                            blue: '#0078D4',
+                            blueDark: '#106EBE',
+                            cyan: '#00E5FF',
+                            red: '#F85149',
+                            green: '#2EA043',
+                            amber: '#D29922'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="bg-canvas text-main h-screen overflow-hidden flex font-sans transition-colors duration-200">
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden lg:hidden"></div>
+
+    <!-- Sidebar -->
+    <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-sidebar border-r border-border transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50 flex flex-col shadow-xl lg:shadow-none">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-border shrink-0">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🇪🇹</span>
+                <span class="font-bold text-lg tracking-tight text-white">Negarit ET</span>
+                <span class="px-2 py-0.5 rounded text-xs font-medium bg-brand-blue/20 text-brand-blue border border-brand-blue/30">v1.0</span>
+            </div>
+            <button id="btn-sidebar-close" class="lg:hidden text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar" id="sidebar-nav">
+            <!-- Populated by JS -->
+        </div>
+
+        <div class="px-4 py-2">
+            <hr class="border-border">
+        </div>
+
+        <div id="national-stats-box" class="px-4 py-3 mx-3 mb-4 rounded-lg bg-card border border-border mt-auto">
+            <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">National Quick Stats</div>
+            <div class="space-y-2 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Peak Temp</span>
+                    <span class="font-mono text-brand-amber font-medium" id="sidebar-stat-temp">--°C</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-400">Peak Rain</span>
+                    <span class="font-mono text-brand-blue font-medium" id="sidebar-stat-rain">--mm</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden relative z-10">
+        
+        <!-- Header -->
+        <header id="app-header" class="h-16 bg-header border-b border-border flex items-center justify-between px-4 lg:px-6 shrink-0 z-20">
+            <div class="flex items-center gap-4">
+                <button id="btn-hamburger" class="lg:hidden text-slate-400 hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                
+                <div class="relative hidden sm:block w-64 md:w-80 lg:w-96">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                    <input type="text" id="location-search-input" placeholder="Search Ethiopian cities..." class="w-full pl-9 pr-10 py-2 bg-card border border-border rounded-lg text-sm text-main placeholder-slate-500 focus:outline-none focus:border-brand-blue focus:ring-1 focus:ring-brand-blue transition-all">
+                    <button id="btn-search-clear" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-main hidden">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                    <div id="location-search-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-xl hidden flex-col max-h-64 overflow-y-auto custom-scrollbar z-50"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 sm:gap-4">
+                <a href="/showcase" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-blue/15 hover:bg-brand-blue/25 border border-brand-blue/30 text-brand-cyan text-xs font-semibold transition-all">
+                    <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+                    <span>Public Showcase</span>
+                </a>
+
+                <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-green/10 border border-brand-green/20 text-brand-green text-xs font-medium">
+                    <span class="w-2 h-2 rounded-full bg-brand-green animate-pulse"></span>
+                    <span id="system-status-text">System Active</span>
+                </div>
+
+                <div id="live-clock" class="hidden sm:block font-mono text-sm text-slate-400 px-3 py-1.5 rounded bg-card border border-border">
+                    --:--:--
+                </div>
+
+                <button id="btn-theme-toggle" class="p-2 text-slate-400 hover:text-main rounded-lg hover:bg-card transition-colors">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+
+                <button class="p-2 text-slate-400 hover:text-main rounded-lg hover:bg-card transition-colors relative">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-brand-red border border-header"></span>
+                </button>
+
+                <!-- Profile Part (AT THE TOP NEXT TO NOTIFICATION) -->
+                <div class="relative ml-1">
+                    <button id="profile-menu-btn" class="flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl bg-card border border-border hover:border-brand-blue/50 text-slate-200 hover:text-white transition-all shadow-sm group">
+                        <div class="w-7 h-7 rounded-full bg-brand-blue/20 text-brand-cyan flex items-center justify-center font-bold text-xs border border-brand-blue/30 shadow-inner shrink-0" id="header-avatar">
+                            --
+                        </div>
+                        <div class="flex flex-col text-left hidden sm:flex">
+                            <span class="text-xs font-semibold text-white leading-tight group-hover:text-brand-cyan transition-colors" id="header-name">Loading...</span>
+                            <span class="text-[10px] text-slate-400 leading-tight" id="header-role-text">Role</span>
+                        </div>
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-bold hidden md:inline-block" id="header-role-badge">
+                            Role
+                        </span>
+                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-colors"></i>
+                    </button>
+                    
+                    <div id="profile-dropdown" class="absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl hidden flex-col py-1.5 z-50 backdrop-blur-xl">
+                        <div class="px-4 py-2.5 border-b border-border/60">
+                            <div class="text-xs font-bold text-white truncate" id="dropdown-user-name">Loading...</div>
+                            <div class="text-[10px] text-slate-400 truncate mt-0.5" id="dropdown-user-role">Role</div>
+                        </div>
+                        <button class="w-full text-left px-4 py-2 text-xs text-slate-200 hover:bg-white/5 flex items-center gap-2 transition-colors" id="btn-open-password">
+                            <i data-lucide="key" class="w-3.5 h-3.5 text-slate-400"></i> Change Password
+                        </button>
+                        <div class="h-px bg-border/60 my-1"></div>
+                        <button class="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-500/10 flex items-center gap-2 transition-colors" id="btn-sign-out">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5 text-red-400"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Viewport -->
+        <main id="main-viewport" class="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar relative">
+            
+            <!-- Views (Tab containers) -->
+            <div id="view-overview" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Executive Overview</h1>
+                <p class="text-slate-400">Overview dashboard coming soon...</p>
+            </div>
+
+            <div id="view-map" class="tab-view hidden flex-col gap-4 h-full min-h-[600px]">
+                <!-- Top Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 shrink-0">
+                    <div class="glass-card p-4 rounded-xl border border-border flex flex-col gap-2" id="metric-temp">
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span class="text-sm font-medium">Avg Temperature</span>
+                            <i data-lucide="thermometer" class="w-4 h-4"></i>
+                        </div>
+                        <div class="text-2xl font-semibold font-mono">--°C</div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border border-border flex flex-col gap-2" id="metric-humidity">
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span class="text-sm font-medium">Avg Humidity</span>
+                            <i data-lucide="droplets" class="w-4 h-4"></i>
+                        </div>
+                        <div class="text-2xl font-semibold font-mono">--%</div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border border-border flex flex-col gap-2" id="metric-precip">
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span class="text-sm font-medium">Total Precipitation</span>
+                            <i data-lucide="cloud-rain" class="w-4 h-4"></i>
+                        </div>
+                        <div class="text-2xl font-semibold font-mono">--mm</div>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border border-border flex flex-col gap-2" id="metric-soil">
+                        <div class="flex justify-between items-center text-slate-400">
+                            <span class="text-sm font-medium">Soil Moisture (0-10cm)</span>
+                            <i data-lucide="mountain" class="w-4 h-4"></i>
+                        </div>
+                        <div class="text-2xl font-semibold font-mono">--m³/m³</div>
+                    </div>
+                </div>
+
+                <!-- Map & Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 flex-1 min-h-[400px]">
+                    <div class="lg:col-span-7 glass-card rounded-xl border border-border flex flex-col overflow-hidden relative">
+                        <div class="p-3 border-b border-border bg-card/50 flex justify-between items-center shrink-0 z-10">
+                            <h2 class="font-semibold text-sm">Spatial Telemetry</h2>
+                            <button id="btn-recenter" class="px-2 py-1 bg-card border border-border rounded text-xs hover:bg-border transition-colors">Recenter</button>
+                        </div>
+                        <div id="leaflet-map" class="flex-1 w-full bg-slate-900 z-0"></div>
+                    </div>
+                    <div class="lg:col-span-5 flex flex-col gap-4">
+                        <div class="glass-card p-4 rounded-xl border border-border flex-1 flex flex-col">
+                            <h2 class="font-semibold text-sm mb-4">Location Trends</h2>
+                            <div class="flex-1 relative min-h-[200px]">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- 1-2 Line AI Model Location Summary -->
+                        <div class="glass-card p-3.5 rounded-xl border border-border shrink-0 flex flex-col gap-2" id="map-location-summary-card">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="p-1 rounded bg-brand-blue/15 text-brand-cyan border border-brand-blue/30">
+                                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                    <h3 class="font-bold text-xs text-white uppercase tracking-wider" id="map-summary-title">AI Predictive Summary</h3>
+                                </div>
+                                <span id="map-summary-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    Live
+                                </span>
+                            </div>
+                            <p id="map-model-summary-text" class="text-xs text-slate-300 leading-relaxed font-normal">
+                                Select any location on the map to view the 16-day AI disaster model analysis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forecast Grid -->
+                <div class="glass-card rounded-xl border border-border p-4 shrink-0">
+                    <h2 class="font-semibold text-sm mb-4">16-Day Forecast Overview</h2>
+                    <div id="forecast-grid" class="flex overflow-x-auto gap-2 pb-2 custom-scrollbar">
+                        <!-- Populated by JS -->
+                        <div class="text-sm text-slate-500">Loading forecast...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-disaster-analytics" class="tab-view hidden flex flex-col gap-6 w-full">
+                <div class="disaster-analytics-header acrylic-card p-6 rounded-2xl border border-white/10">
+                    <h1 class="text-2xl font-bold text-white">Disaster Risk Analytics</h1>
+                    <p class="text-slate-300 text-sm mt-1">Real-time threat matrix and predictive analytics for early warning and intervention.</p>
+                </div>
+                
+                <!-- OS-Grade Probability Filter & Analytics Toolbar -->
+                <div id="disaster-filter-toolbar" class="acrylic-card p-4 sm:p-5 rounded-2xl border border-white/10 flex flex-col gap-4">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-xl bg-brand-blue/15 text-brand-cyan border border-brand-blue/30">
+                                <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span>Probability Filter</span>
+                                    <span id="active-filter-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                        Active: > 60% (Default)
+                                    </span>
+                                </h3>
+                                <p class="text-[11px] text-slate-400">Evaluated across all 20 Ethiopian administrative hubs & climate corridors</p>
+                            </div>
+                        </div>
+
+                        <!-- Reset & Threat match count -->
+                        <div class="flex items-center gap-2">
+                            <span id="threat-match-count" class="text-xs font-mono text-slate-300 bg-card/60 px-3 py-1.5 rounded-lg border border-border">
+                                Calculating national threats...
+                            </span>
+                            <button id="btn-reset-filters" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-border text-slate-300 border border-border transition-colors flex items-center gap-1.5">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                <span>Reset (> 60%)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Controls Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-3 pt-3 border-t border-white/5 items-center">
+                        <!-- Quick Probability Presets -->
+                        <div class="md:col-span-6 flex flex-wrap items-center gap-1.5" id="prob-preset-group">
+                            <span class="text-xs text-slate-400 mr-1 font-medium">Cutoff:</span>
+                            <button data-prob="60" class="prob-preset-btn active px-3 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                <span>> 60% High Risk (Default)</span>
+                            </button>
+                            <button data-prob="75" class="prob-preset-btn px-3 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                                <span>> 75% Critical</span>
+                            </button>
+                            <button data-prob="40" class="prob-preset-btn px-3 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+                                <span>> 40% Elevated+</span>
+                            </button>
+                            <button data-prob="0" class="prob-preset-btn px-3 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                                <span>All Places (0-100%)</span>
+                            </button>
+                        </div>
+
+                        <!-- Range Slider -->
+                        <div class="md:col-span-3 flex items-center gap-2">
+                            <span class="text-[11px] text-slate-400 whitespace-nowrap">Min: <strong id="prob-slider-display" class="font-mono text-brand-cyan">60%</strong></span>
+                            <input id="prob-range-slider" type="range" min="0" max="95" step="5" value="60" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-brand-blue">
+                        </div>
+
+                        <!-- Search / Hazard Filter -->
+                        <div class="md:col-span-3 flex items-center gap-2">
+                            <div class="relative flex-1">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
+                                <input id="disaster-search-input" type="text" placeholder="Search city or hazard..." class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-card border border-border text-white placeholder-slate-500 focus:outline-none focus:border-brand-blue">
+                            </div>
+                            <select id="disaster-hazard-filter" class="px-2.5 py-1.5 text-xs rounded-lg bg-card border border-border text-slate-300 focus:outline-none focus:border-brand-blue">
+                                <option value="all">All Hazards</option>
+                                <option value="drought">Drought</option>
+                                <option value="flood">Flash Flood</option>
+                                <option value="landslide">Landslide</option>
+                                <option value="heatwave">Heatwave</option>
+                                <option value="earthquake">Seismic</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="disaster-summary-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="glass-card rounded-2xl border border-border overflow-hidden w-full">
+                    <div class="p-4 border-b border-border bg-card/50 flex justify-between items-center">
+                        <h2 class="font-semibold text-sm text-white">Active Threat Matrix Across Agro-Ecological Zones</h2>
+                        <span class="text-xs text-slate-400 font-mono">Live Multivariate Correlation</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-400 uppercase bg-card/30 border-b border-border">
+                                <tr>
+                                    <th class="px-4 py-3">ID</th>
+                                    <th class="px-4 py-3">Region & Zone</th>
+                                    <th class="px-4 py-3">Hazard Model</th>
+                                    <th class="px-4 py-3">Severity</th>
+                                    <th class="px-4 py-3">Probability</th>
+                                    <th class="px-4 py-3">Trigger & Protocol</th>
+                                    <th class="px-4 py-3">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="disaster-table-body" class="divide-y divide-border">
+                                <tr><td colspan="7" class="px-4 py-8 text-center text-slate-500">Loading threat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-approval" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Approval Queue</h1>
+            </div>
+
+            <div id="view-dispatch" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Dispatch & Operations</h1>
+            </div>
+
+            <div id="view-resources" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Resources & Inventory</h1>
+            </div>
+
+            <div id="view-community" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Community & Reporters</h1>
+            </div>
+
+            <div id="view-donations" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Donations & Relief</h1>
+            </div>
+
+            <div id="view-reports" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Reports & Evidence</h1>
+            </div>
+
+            <div id="view-model-tester" class="tab-view hidden flex-col gap-4">
+                <h1 class="text-2xl font-bold">Model Testing Sandbox</h1>
+                <p class="text-slate-400 text-sm mb-4">Evaluate risk models against historical and synthetic data.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="glass-card p-4 rounded-xl border border-border">
+                        <h2 class="font-semibold mb-4">Method A: Batch Benchmark</h2>
+                        <div id="benchmark-cards-container" class="space-y-3">
+                            <button class="w-full text-left p-3 rounded-lg border border-border hover:border-brand-blue bg-card hover:bg-card/80 transition-colors flex justify-between items-center group">
+                                <div>
+                                    <div class="font-medium text-sm">Historical Flood Data 2023</div>
+                                    <div class="text-xs text-slate-500 mt-1">1,240 records • Oromia Region</div>
+                                </div>
+                                <i data-lucide="play" class="w-4 h-4 text-slate-400 group-hover:text-brand-blue"></i>
+                            </button>
+                            <button class="w-full text-left p-3 rounded-lg border border-border hover:border-brand-blue bg-card hover:bg-card/80 transition-colors flex justify-between items-center group">
+                                <div>
+                                    <div class="font-medium text-sm">Synthetic Drought Scenarios</div>
+                                    <div class="text-xs text-slate-500 mt-1">500 records • Nationwide</div>
+                                </div>
+                                <i data-lucide="play" class="w-4 h-4 text-slate-400 group-hover:text-brand-blue"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl border border-border">
+                        <h2 class="font-semibold mb-4">Live Scorecard</h2>
+                        <div class="flex gap-4 mb-4">
+                            <div class="flex-1 bg-card/50 p-3 rounded-lg border border-border">
+                                <div class="text-xs text-slate-400">Latency</div>
+                                <div class="font-mono text-lg" id="test-latency">-- ms</div>
+                            </div>
+                            <div class="flex-1 bg-card/50 p-3 rounded-lg border border-border">
+                                <div class="text-xs text-slate-400">Result</div>
+                                <div class="mt-1 inline-block px-2 py-0.5 rounded text-xs font-medium bg-slate-800 text-slate-300" id="test-result-badge">Pending</div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto border border-border rounded-lg">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-card/50 border-b border-border">
+                                    <tr><th class="p-2">Metric</th><th class="p-2">Value</th></tr>
+                                </thead>
+                                <tbody id="test-results-table-body" class="divide-y divide-border bg-card/20">
+                                    <tr><td colspan="2" class="p-4 text-center text-slate-500">Run a test to see results</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="glass-card p-4 rounded-xl border border-border">
+                        <h2 class="font-semibold mb-4">Method B: Interactive Parameters</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="flex justify-between text-xs font-medium text-slate-400 mb-1">
+                                    <span>Soil Moisture</span><span id="val-soil">0.2</span>
+                                </label>
+                                <input type="range" min="0" max="1" step="0.01" value="0.2" class="w-full accent-brand-blue">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-xs font-medium text-slate-400 mb-1">
+                                    <span>Rainfall (mm)</span><span id="val-rain">15</span>
+                                </label>
+                                <input type="range" min="0" max="100" step="1" value="15" class="w-full accent-brand-blue">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-xs font-medium text-slate-400 mb-1">
+                                    <span>Peak Temp (°C)</span><span id="val-temp">30</span>
+                                </label>
+                                <input type="range" min="0" max="50" step="0.5" value="30" class="w-full accent-brand-blue">
+                            </div>
+                            <div>
+                                <label class="flex justify-between text-xs font-medium text-slate-400 mb-1">
+                                    <span>Seismic Mag</span><span id="val-seismic">0.0</span>
+                                </label>
+                                <input type="range" min="0" max="9" step="0.1" value="0" class="w-full accent-brand-blue">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-4 rounded-xl border border-border flex flex-col">
+                        <h2 class="font-semibold mb-2 flex justify-between items-center">
+                            <span>Method C: Raw JSON Input</span>
+                            <button id="btn-test-json" class="px-3 py-1.5 bg-brand-blue hover:bg-brand-blueDark text-white text-xs rounded-md transition-colors flex items-center gap-1">
+                                <i data-lucide="zap" class="w-3 h-3"></i> Evaluate
+                            </button>
+                        </h2>
+                        <textarea id="json-input-box" class="flex-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-brand-blue resize-none min-h-[150px]" placeholder='{&#10;  "features": {}&#10;}'></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-mini-apps" class="tab-view hidden">
+                <h1 class="text-2xl font-bold mb-4">Mini Apps Hub</h1>
+            </div>
+
+            <div id="view-user-management" class="tab-view hidden flex-col gap-6">
+                <!-- Page Access Matrix -->
+                <div class="glass-card rounded-xl border border-border overflow-hidden">
+                    <div class="p-4 border-b border-border bg-card/50 flex justify-between items-center">
+                        <h2 class="font-semibold text-sm">Role Permissions Matrix</h2>
+                        <button id="btn-save-permissions" class="px-3 py-1.5 bg-brand-blue hover:bg-brand-blueDark text-white text-xs rounded-md transition-colors flex items-center gap-1 shadow-sm">
+                            <i data-lucide="save" class="w-3 h-3"></i> Save Changes
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto p-4">
+                        <table class="w-full text-sm text-left" id="permissions-matrix-table">
+                            <thead class="text-xs text-slate-400 uppercase border-b border-border">
+                                <tr id="perm-header-row">
+                                    <th class="px-3 py-2 font-medium sticky left-0 bg-card z-10">Role</th>
+                                    <!-- Populated dynamically -->
+                                </tr>
+                            </thead>
+                            <tbody id="perm-body" class="divide-y divide-border/50">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <hr class="border-border">
+
+                <!-- User Management Table -->
+                <div class="glass-card rounded-xl border border-border flex flex-col min-h-[500px]">
+                    <div class="p-4 border-b border-border bg-card/50 flex flex-col md:flex-row gap-4 justify-between items-center">
+                        <h2 class="font-semibold text-sm shrink-0">User Directory</h2>
+                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <div class="relative flex-1 md:flex-none">
+                                <i data-lucide="search" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                <input type="text" id="user-search" placeholder="Search users..." class="w-full md:w-48 pl-8 pr-3 py-1.5 bg-slate-900 border border-border rounded text-sm text-main focus:outline-none focus:border-brand-blue transition-colors">
+                            </div>
+                            <select id="user-role-filter" class="bg-slate-900 border border-border rounded px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue">
+                                <option value="">All Roles</option>
+                                <option value="super_admin">Super Admin</option>
+                                <option value="government_official">Gov Official</option>
+                                <option value="agency_operator">Agency Operator</option>
+                                <option value="community_reporter">Community Reporter</option>
+                            </select>
+                            <select id="user-status-filter" class="bg-slate-900 border border-border rounded px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <button id="btn-refresh-users" class="p-1.5 text-slate-400 hover:text-main bg-slate-900 border border-border rounded hover:bg-slate-800 transition-colors" title="Refresh">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                            <button id="btn-add-user" class="px-3 py-1.5 bg-brand-green hover:bg-brand-green/90 text-white text-xs rounded-md transition-colors flex items-center gap-1 shadow-sm ml-auto md:ml-2">
+                                <i data-lucide="plus" class="w-3 h-3"></i> Add User
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-400 uppercase bg-card/30 border-b border-border sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-3">User</th>
+                                    <th class="px-4 py-3">Username</th>
+                                    <th class="px-4 py-3">Role</th>
+                                    <th class="px-4 py-3">Region</th>
+                                    <th class="px-4 py-3">Status</th>
+                                    <th class="px-4 py-3">Last Login</th>
+                                    <th class="px-4 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body" class="divide-y divide-border">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-activity-logs" class="tab-view hidden flex-col gap-4 h-full">
+                <div class="glass-card rounded-xl border border-border flex flex-col h-full">
+                    <div class="p-4 border-b border-border bg-card/50 flex flex-col md:flex-row gap-4 justify-between items-center shrink-0">
+                        <h2 class="font-semibold text-sm">System Activity Logs</h2>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="log-action-filter" class="bg-slate-900 border border-border rounded px-2 py-1.5 text-sm focus:outline-none focus:border-brand-blue">
+                                <option value="">All Actions</option>
+                                <option value="User Created">User Created</option>
+                                <option value="Role Changed">Role Changed</option>
+                                <option value="Status Changed">Status Changed</option>
+                                <option value="Permissions Updated">Permissions Updated</option>
+                                <option value="User Deleted">User Deleted</option>
+                                <option value="Password Changed">Password Changed</option>
+                                <option value="User Login">User Login</option>
+                            </select>
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+                                <input type="text" id="log-search" placeholder="Search logs..." class="w-48 pl-8 pr-3 py-1.5 bg-slate-900 border border-border rounded text-sm text-main focus:outline-none focus:border-brand-blue">
+                            </div>
+                            <button id="btn-filter-logs" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs rounded border border-border transition-colors">
+                                Filter
+                            </button>
+                            <button id="btn-refresh-logs" class="p-1.5 text-slate-400 hover:text-main bg-slate-900 border border-border rounded hover:bg-slate-800 transition-colors" title="Refresh">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            </button>
+                            <button id="btn-export-logs" class="px-3 py-1.5 bg-brand-green/20 text-brand-green border border-brand-green/30 hover:bg-brand-green/30 text-xs rounded transition-colors flex items-center gap-1 ml-auto md:ml-2">
+                                <i data-lucide="download" class="w-3 h-3"></i> Export Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-auto relative">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-400 uppercase bg-card/80 backdrop-blur border-b border-border sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-4 py-3">#</th>
+                                    <th class="px-4 py-3">Timestamp</th>
+                                    <th class="px-4 py-3">Actor</th>
+                                    <th class="px-4 py-3">Action</th>
+                                    <th class="px-4 py-3">Target</th>
+                                    <th class="px-4 py-3">Details</th>
+                                    <th class="px-4 py-3 text-right">IP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body" class="divide-y divide-border">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-8 pt-4 border-t border-border text-center text-xs text-slate-500 pb-4 shrink-0">
+                Powered by Open-Meteo API & USGS Earthquake Hazards Program
+            </footer>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- Change Password Modal -->
+    <div id="password-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-card border border-border rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all">
+            <div class="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
+                <h3 class="font-semibold">Change Password</h3>
+                <button class="text-slate-400 hover:text-white" onclick="document.getElementById('password-modal').classList.add('hidden')">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Current Password</label>
+                    <input type="password" id="pwd-current" class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">New Password (min 6 chars)</label>
+                    <input type="password" id="pwd-new" class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Confirm New Password</label>
+                    <input type="password" id="pwd-confirm" class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                </div>
+            </div>
+            <div class="p-4 border-t border-border bg-slate-900/50 flex justify-end gap-2">
+                <button class="px-4 py-2 text-sm text-slate-300 hover:text-white transition-colors" onclick="document.getElementById('password-modal').classList.add('hidden')">Cancel</button>
+                <button id="btn-save-password" class="px-4 py-2 text-sm bg-brand-blue hover:bg-brand-blueDark text-white rounded shadow transition-colors">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal (Structure defined in user_management.js) -->
+    <div id="user-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <!-- Populated by JS -->
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2"></div>
+
+    <!-- Initialization Scripts -->
+    <script>
+        // Server injected data
+        window.NEGARIT_USER = {{ user | tojson | safe }};
+        window.NEGARIT_PERMISSIONS = {{ permissions | tojson | safe }};
+        window.NEGARIT_ROLE_DISPLAY = '{{ role_display_name }}';
+        window.NEGARIT_ROLE_COLORS = {{ role_colors | tojson | safe }};
+    </script>
+
+    <!-- Engines & Telemetry -->
+    <script src="/static/js/engines/prediction_engine.js"></script>
+    <script src="/static/js/engines/historical_benchmarks.js"></script>
+    <script src="/static/js/engines/weather_api.js"></script>
+    <script src="/static/js/engines/map_controller.js"></script>
+    <script src="/static/js/engines/chart_controller.js"></script>
+
+    <!-- App Core -->
+    <script src="/static/js/utils/api_client.js"></script>
+    <script src="/static/js/utils/formatters.js"></script>
+    <script src="/static/js/permissions.js"></script>
+    <script src="/static/js/sidebar.js"></script>
+    <script src="/static/js/header.js"></script>
+
+    <!-- Domain Page Controllers -->
+    <script src="/static/js/pages/overview.js"></script>
+    <script src="/static/js/pages/map_telemetry.js"></script>
+    <script src="/static/js/pages/disaster_analytics.js"></script>
+    <script src="/static/js/pages/approval_queue.js"></script>
+    <script src="/static/js/pages/dispatch.js"></script>
+    <script src="/static/js/pages/resources.js"></script>
+    <script src="/static/js/pages/community.js"></script>
+    <script src="/static/js/pages/donations.js"></script>
+    <script src="/static/js/pages/reports.js"></script>
+    <script src="/static/js/pages/model_tester.js"></script>
+    <script src="/static/js/pages/mini_apps.js"></script>
+    <script src="/static/js/pages/user_management.js"></script>
+    <script src="/static/js/pages/activity_logs.js"></script>
+
+    <!-- Application Orchestrator -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

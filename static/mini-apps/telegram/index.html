@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Negarit - Telegram Field Reporter</title>
+  <link rel="stylesheet" crossorigin href="./assets/index-DGZErIYR.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    :root, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #f8fbfa !important;
+      overflow: hidden;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #f8fbfa !important;
+      font-family: 'Manrope', 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #root {
+      width: 100%;
+      min-height: 100%;
+      background: #f8fbfa;
+    }
+    .app {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto !important;
+      min-height: 100% !important;
+      background: #f8fbfa !important;
+      padding-bottom: 82px !important;
+      box-shadow: none !important;
+      position: relative;
+    }
+    header {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 40 !important;
+      background: #fbfdfc !important;
+    }
+    nav {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      transform: none !important;
+      z-index: 50 !important;
+      background: #fbfdfc !important;
+      border-top: 1px solid #dfe9e5 !important;
+    }
+    /* Custom clean scrollbar */
+    body::-webkit-scrollbar {
+      width: 4px;
+    }
+    body::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.15);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    if (!window.Telegram) {
+      window.Telegram = {
+        WebApp: {
+          ready: function() {},
+          expand: function() {},
+          setHeaderColor: function() {},
+          HapticFeedback: {
+            notificationOccurred: function(type) { console.log('Haptic:', type); }
+          },
+          initDataUnsafe: {
+            user: {
+              first_name: 'Abebe',
+              last_name: 'Kebede',
+              username: 'abebe_kebede',
+              photo_url: ''
+            }
+          }
+        }
+      };
+    }
+  </script>
+  <div id="root"></div>
+  <script type="module" crossorigin src="./assets/index-C3dC7vpp.js"></script>
+</body>
+</html>
