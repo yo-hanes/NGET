@@ -94,7 +94,7 @@ window.MiniAppsPage = {
           
           <!-- Left: App Identity -->
           <div class="flex items-center gap-3 min-w-0">
-            <button onclick="MiniAppsPage.closeModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0 border border-border">
+            <button onclick="MiniAppsPage.closeModal()" class="px-3 py-1.5 bg-card hover:bg-border text-main rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 shrink-0 border border-border">
               <i data-lucide="arrow-left" class="w-4 h-4"></i>
               <span>Exit Fullscreen</span>
             </button>
@@ -103,7 +103,7 @@ window.MiniAppsPage = {
               <div id="modal-app-icon" class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"></div>
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                  <h3 id="modal-app-title" class="font-bold text-white text-sm truncate"></h3>
+                  <h3 id="modal-app-title" class="font-bold text-main text-sm truncate"></h3>
                   <span id="modal-app-tag" class="px-2 py-0.5 text-[10px] font-semibold rounded-full border shrink-0 hidden sm:inline-block"></span>
                 </div>
               </div>
@@ -111,22 +111,22 @@ window.MiniAppsPage = {
           </div>
 
           <!-- Center: Quick Channel Switcher -->
-          <div class="flex items-center gap-1 bg-slate-900 border border-border p-1 rounded-lg">
-            <button onclick="MiniAppsPage.openApp('telegram')" id="modal-tab-telegram" class="px-3 py-1 text-xs rounded transition-colors text-slate-400 hover:text-white">Telegram</button>
-            <button onclick="MiniAppsPage.openApp('mpesa')" id="modal-tab-mpesa" class="px-3 py-1 text-xs rounded transition-colors text-slate-400 hover:text-white">M-PESA</button>
-            <button onclick="MiniAppsPage.openApp('ussd')" id="modal-tab-ussd" class="px-3 py-1 text-xs rounded transition-colors text-slate-400 hover:text-white">USSD *444#</button>
-            <button onclick="MiniAppsPage.openApp('voice')" id="modal-tab-voice" class="px-3 py-1 text-xs rounded transition-colors text-slate-400 hover:text-white">Voice 444</button>
+          <div class="flex items-center gap-1 bg-card border border-border p-1 rounded-lg">
+            <button onclick="MiniAppsPage.openApp('telegram')" id="modal-tab-telegram" class="px-3 py-1 text-xs rounded transition-colors text-muted hover:text-main">Telegram</button>
+            <button onclick="MiniAppsPage.openApp('mpesa')" id="modal-tab-mpesa" class="px-3 py-1 text-xs rounded transition-colors text-muted hover:text-main">M-PESA</button>
+            <button onclick="MiniAppsPage.openApp('ussd')" id="modal-tab-ussd" class="px-3 py-1 text-xs rounded transition-colors text-muted hover:text-main">USSD *444#</button>
+            <button onclick="MiniAppsPage.openApp('voice')" id="modal-tab-voice" class="px-3 py-1 text-xs rounded transition-colors text-muted hover:text-main">Voice 444</button>
           </div>
 
           <!-- Right: Actions & Dismiss -->
           <div class="flex items-center gap-2 shrink-0">
-            <button onclick="MiniAppsPage.reloadCurrentApp()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors" title="Reload Simulator">
+            <button onclick="MiniAppsPage.reloadCurrentApp()" class="p-2 text-muted hover:text-main hover:bg-card rounded-lg transition-colors" title="Reload Simulator">
               <i data-lucide="refresh-cw" class="w-4 h-4"></i>
             </button>
-            <a id="modal-open-tab-btn" href="#" target="_blank" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors flex items-center" title="Open in New Tab">
+            <a id="modal-open-tab-btn" href="#" target="_blank" class="p-2 text-muted hover:text-main hover:bg-card rounded-lg transition-colors flex items-center" title="Open in New Tab">
               <i data-lucide="external-link" class="w-4 h-4"></i>
             </a>
-            <button onclick="MiniAppsPage.closeModal()" class="p-2 text-slate-400 hover:text-white hover:bg-red-500/20 hover:text-red-400 rounded-lg transition-colors" title="Close (Esc)">
+            <button onclick="MiniAppsPage.closeModal()" class="p-2 text-muted hover:text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors" title="Close (Esc)">
               <i data-lucide="x" class="w-5 h-5"></i>
             </button>
           </div>
@@ -178,16 +178,16 @@ window.MiniAppsPage = {
           </div>
 
           <!-- Title & Subtitle -->
-          <h3 class="font-bold text-white text-base tracking-tight">${app.title}</h3>
-          <p class="text-xs text-slate-400 mt-1">${app.subtitle}</p>
+          <h3 class="font-bold text-main text-base tracking-tight">${app.title}</h3>
+          <p class="text-xs text-muted mt-1">${app.subtitle}</p>
         </div>
 
         <!-- Clean Action Buttons -->
-        <div class="mt-6 pt-4 border-t border-border/60 flex flex-col gap-2">
-          <button onclick="MiniAppsPage.openApp('${app.id}')" class="w-full py-2.5 bg-brand-blue hover:bg-brand-blueDark text-white rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-md shadow-brand-blue/20">
+        <div class="mt-6 pt-4 border-t border-border flex flex-col gap-2">
+          <button onclick="MiniAppsPage.openApp('${app.id}')" class="w-full py-2.5 bg-brand-green hover:bg-brand-greenDark text-white rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-md shadow-brand-green/20">
             <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i> Launch Simulator
           </button>
-          <a href="${app.url}" target="_blank" class="w-full py-1.5 bg-slate-900/60 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5 border border-border/60">
+          <a href="${app.url}" target="_blank" class="w-full py-1.5 bg-card hover:bg-border text-muted hover:text-main rounded-lg text-[11px] font-medium transition-colors flex items-center justify-center gap-1.5 border border-border">
             <i data-lucide="external-link" class="w-3 h-3"></i> Open in New Tab
           </a>
         </div>
@@ -218,9 +218,9 @@ window.MiniAppsPage = {
       const tabBtn = document.getElementById(`modal-tab-${id}`);
       if (tabBtn) {
         if (id === appId) {
-          tabBtn.className = 'px-3 py-1 text-xs rounded font-semibold bg-brand-blue text-white shadow-sm';
+          tabBtn.className = 'px-3 py-1 text-xs rounded font-semibold bg-brand-green text-white shadow-sm';
         } else {
-          tabBtn.className = 'px-3 py-1 text-xs rounded transition-colors text-slate-400 hover:text-white';
+          tabBtn.className = 'px-3 py-1 text-xs rounded transition-colors text-muted hover:text-main';
         }
       }
     });

@@ -143,6 +143,10 @@ window.Header = {
             html.classList.toggle('dark');
             const isDark = html.classList.contains('dark');
             localStorage.setItem('negarit_theme', isDark ? 'dark' : 'light');
+            window.dispatchEvent(new CustomEvent('negarit:theme-changed', { detail: { isDark } }));
+            if (window.ChartController && typeof window.ChartController.refreshTheme === 'function') {
+                window.ChartController.refreshTheme();
+            }
         });
     },
 

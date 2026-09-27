@@ -25,8 +25,8 @@ window.ChartController = {
     });
 
     const isDark = document.documentElement.classList.contains('dark');
-    const textColor = isDark ? '#94a3b8' : '#64748b';
-    const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+    const textColor = isDark ? '#94a3b8' : '#334155';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
 
     this.chartInstance = new Chart(canvas, {
       type: 'line',
@@ -36,8 +36,8 @@ window.ChartController = {
           {
             label: 'Max Temp (°C)',
             data: daily.temperature_2m_max,
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+            borderColor: '#EF373E',
+            backgroundColor: 'rgba(239, 55, 62, 0.12)',
             borderWidth: 2,
             tension: 0.35,
             fill: true,
@@ -46,7 +46,7 @@ window.ChartController = {
           {
             label: 'Min Temp (°C)',
             data: daily.temperature_2m_min,
-            borderColor: '#38bdf8',
+            borderColor: '#F59E0B',
             borderWidth: 1.5,
             borderDash: [3, 3],
             pointRadius: 2,
@@ -58,8 +58,8 @@ window.ChartController = {
             label: 'Rain Sum (mm)',
             data: daily.precipitation_sum,
             type: 'bar',
-            backgroundColor: 'rgba(16, 185, 129, 0.65)',
-            borderColor: '#10b981',
+            backgroundColor: 'rgba(44, 179, 74, 0.65)',
+            borderColor: '#2CB34A',
             borderWidth: 1,
             borderRadius: 4,
             yAxisID: 'y1'
@@ -78,15 +78,15 @@ window.ChartController = {
             position: 'top',
             labels: {
               boxWidth: 12,
-              font: { family: 'Plus Jakarta Sans', size: 11 },
+              font: { family: 'Inter', size: 11, weight: '500' },
               color: textColor
             }
           },
           tooltip: {
-            backgroundColor: isDark ? '#0f172a' : '#ffffff',
+            backgroundColor: isDark ? 'rgba(15, 21, 34, 0.95)' : 'rgba(255, 255, 255, 0.98)',
             titleColor: isDark ? '#f8fafc' : '#0f172a',
             bodyColor: isDark ? '#cbd5e1' : '#334155',
-            borderColor: isDark ? '#334155' : '#e2e8f0',
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.12)',
             borderWidth: 1,
             padding: 10,
             cornerRadius: 8
@@ -114,8 +114,8 @@ window.ChartController = {
             position: 'right',
             grid: { drawOnChartArea: false },
             ticks: {
-              color: '#10b981',
-              font: { size: 10 },
+              color: '#2CB34A',
+              font: { size: 10, weight: 'bold' },
               callback: (val) => `${val}mm`
             }
           }

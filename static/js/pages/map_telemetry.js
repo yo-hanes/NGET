@@ -182,24 +182,24 @@ window.MapTelemetryPage = {
       if (summaryBadge) {
         summaryBadge.textContent = top.riskScore >= 75 ? 'CRITICAL ALERT' : 'HIGH RISK WATCH';
         summaryBadge.className = top.riskScore >= 75 
-          ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-500/20 text-red-300 border border-red-500/40 animate-pulse'
-          : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+          ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-red/15 text-brand-red border border-brand-red/40 animate-pulse'
+          : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500 border border-amber-500/40';
       }
       const secondClause = (second && second.riskScore >= 55) ? ` Secondary watch: ${second.name.split('&')[0]} (${second.riskScore}%).` : '';
-      summaryText.innerHTML = `⚠️ <strong class="text-white">${city.name}:</strong> AI models project <span class="text-amber-300 font-semibold">${top.riskScore}% ${top.name}</span> risk (${top.predictedWindow}). Primary driver: <span class="font-mono text-slate-200">${top.keyIndicator}</span>.${secondClause} Protocol: <span class="text-slate-300 italic">${top.protocol}</span>`;
+      summaryText.innerHTML = `⚠️ <strong class="text-main">${city.name}:</strong> AI models project <span class="text-amber-500 font-semibold">${top.riskScore}% ${top.name}</span> risk (${top.predictedWindow}). Primary driver: <span class="font-mono text-main">${top.keyIndicator}</span>.${secondClause} Protocol: <span class="text-muted italic">${top.protocol}</span>`;
     } else if (top.riskScore >= 45) {
       if (summaryBadge) {
         summaryBadge.textContent = 'ELEVATED ADVISORY';
-        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
+        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-600 dark:text-yellow-300 border border-yellow-500/30';
       }
-      summaryText.innerHTML = `⚠️ <strong class="text-white">${city.name}:</strong> Moderate <span class="text-yellow-300 font-semibold">${top.name}</span> watch (${top.riskScore}%). Driven by <span class="font-mono text-slate-200">${top.keyIndicator}</span>. Soil moisture and runoff remain under observation.`;
+      summaryText.innerHTML = `⚠️ <strong class="text-main">${city.name}:</strong> Moderate <span class="text-yellow-600 dark:text-yellow-300 font-semibold">${top.name}</span> watch (${top.riskScore}%). Driven by <span class="font-mono text-main">${top.keyIndicator}</span>. Soil moisture and runoff remain under observation.`;
     } else {
       if (summaryBadge) {
         summaryBadge.textContent = 'NORMAL STABLE';
-        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-green/15 text-brand-green border border-brand-green/30';
       }
       const soilVal = (telemetry.current?.soil_moisture_0_to_7cm || 0.28).toFixed(3);
-      summaryText.innerHTML = `✅ <strong class="text-white">${city.name}:</strong> All 5 predictive disaster models report baseline stability. Current rainfall, temperature, and soil saturation (<span class="font-mono text-slate-200">${soilVal} m³/m³</span>) are within safe seasonal thresholds.`;
+      summaryText.innerHTML = `✅ <strong class="text-main">${city.name}:</strong> All 5 predictive disaster models report baseline stability. Current rainfall, temperature, and soil saturation (<span class="font-mono text-main">${soilVal} m³/m³</span>) are within safe seasonal thresholds.`;
     }
   }
 };

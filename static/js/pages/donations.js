@@ -36,11 +36,11 @@ window.DonationsPage = {
               <span class="font-bold text-white">${pct}% of ETB ${c.target.toLocaleString()}</span>
             </div>
             <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-              <div class="bg-brand-blue h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+              <div class="bg-brand-green h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
             </div>
             <div class="flex justify-between items-center text-[11px] text-slate-500 mt-3">
               <span>${c.donors.toLocaleString()} M-PESA Donors</span>
-              <button onclick="alert('Simulated M-PESA donation bottom-sheet: Dial *733# or use Safaricom App')" class="px-3 py-1 bg-brand-green hover:bg-emerald-600 text-white rounded text-xs font-semibold transition-colors flex items-center gap-1">
+              <button onclick="alert('Simulated M-PESA donation bottom-sheet: Dial *733# or use Safaricom App')" class="px-3 py-1 bg-brand-green hover:bg-brand-greenDark text-white rounded text-xs font-semibold transition-colors flex items-center gap-1 shadow-sm">
                 <i data-lucide="heart" class="w-3 h-3"></i> Donate via M-PESA
               </button>
             </div>

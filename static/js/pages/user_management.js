@@ -85,7 +85,7 @@ window.UserManagementPage = {
                 
                 td.innerHTML = `
                     <label class="flex items-center justify-center w-full h-full cursor-pointer">
-                        <input type="checkbox" class="perm-checkbox w-4 h-4 text-brand-blue rounded border-border focus:ring-brand-blue bg-slate-800"
+                        <input type="checkbox" class="perm-checkbox w-4 h-4 text-brand-green rounded border-border focus:ring-brand-green bg-card"
                             data-role="${role}" data-page="${key}"
                             ${hasAccess ? 'checked' : ''}
                             ${isLocked ? 'disabled' : ''}>
@@ -196,37 +196,37 @@ window.UserManagementPage = {
             tr.innerHTML = `
                 <td class="px-4 py-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-300">
+                        <div class="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center text-xs font-bold text-main">
                             ${Formatters.initials(u.first_name, u.last_name)}
                         </div>
                         <div>
-                            <div class="font-medium">${u.first_name} ${u.last_name} ${isSelf ? '<span class="text-xs text-brand-blue">(You)</span>' : ''}</div>
+                            <div class="font-medium text-main">${u.first_name} ${u.last_name} ${isSelf ? '<span class="text-xs text-brand-green font-semibold">(You)</span>' : ''}</div>
                         </div>
                     </div>
                 </td>
-                <td class="px-4 py-3 font-mono text-xs text-slate-400">${u.user_name}</td>
+                <td class="px-4 py-3 font-mono text-xs text-muted">${u.user_name}</td>
                 <td class="px-4 py-3">
-                    <select class="role-select bg-slate-900 border border-border rounded px-2 py-1 text-xs focus:border-brand-blue" data-id="${u.user_id}" ${isSelf ? 'disabled' : ''}>
+                    <select class="role-select bg-card border border-border rounded px-2 py-1 text-xs focus:border-brand-green text-main" data-id="${u.user_id}" ${isSelf ? 'disabled' : ''}>
                         <option value="super_admin" ${u.role === 'super_admin' ? 'selected' : ''}>Super Admin</option>
                         <option value="government_official" ${u.role === 'government_official' ? 'selected' : ''}>Gov Official</option>
                         <option value="agency_operator" ${u.role === 'agency_operator' ? 'selected' : ''}>Agency Operator</option>
                         <option value="community_reporter" ${u.role === 'community_reporter' ? 'selected' : ''}>Community Reporter</option>
                     </select>
                 </td>
-                <td class="px-4 py-3 text-sm">${u.region || '--'}</td>
+                <td class="px-4 py-3 text-sm text-main">${u.region || '--'}</td>
                 <td class="px-4 py-3">
-                    <select class="status-select bg-slate-900 border border-border rounded px-2 py-1 text-xs focus:border-brand-blue" data-id="${u.user_id}" ${isSelf ? 'disabled' : ''}>
+                    <select class="status-select bg-card border border-border rounded px-2 py-1 text-xs focus:border-brand-green text-main" data-id="${u.user_id}" ${isSelf ? 'disabled' : ''}>
                         <option value="true" ${u.is_active ? 'selected' : ''}>Active</option>
                         <option value="false" ${!u.is_active ? 'selected' : ''}>Inactive</option>
                     </select>
                 </td>
-                <td class="px-4 py-3 text-xs text-slate-400">${Formatters.relativeTime(u.last_login_at)}</td>
+                <td class="px-4 py-3 text-xs text-muted">${Formatters.relativeTime(u.last_login_at)}</td>
                 <td class="px-4 py-3 text-right">
                     <div class="flex justify-end gap-2">
-                        <button class="btn-save-user p-1.5 text-slate-400 hover:text-brand-blue transition-colors disabled:opacity-30 disabled:hover:text-slate-400" data-id="${u.user_id}" disabled title="Save Changes">
+                        <button class="btn-save-user p-1.5 text-muted hover:text-brand-green transition-colors disabled:opacity-30 disabled:hover:text-muted" data-id="${u.user_id}" disabled title="Save Changes">
                             <i data-lucide="save" class="w-4 h-4"></i>
                         </button>
-                        <button class="btn-delete-user p-1.5 text-slate-400 hover:text-brand-red transition-colors ${isSelf ? 'hidden' : ''}" data-id="${u.user_id}" title="Delete User">
+                        <button class="btn-delete-user p-1.5 text-muted hover:text-brand-red transition-colors ${isSelf ? 'hidden' : ''}" data-id="${u.user_id}" title="Delete User">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -297,39 +297,39 @@ window.UserManagementPage = {
         const modal = document.getElementById('user-modal');
         modal.innerHTML = `
             <div class="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-                <div class="p-4 border-b border-border flex justify-between items-center bg-slate-900/50">
-                    <h3 class="font-semibold">Add New User</h3>
-                    <button class="text-slate-400 hover:text-white" onclick="document.getElementById('user-modal').classList.add('hidden')">
+                <div class="p-4 border-b border-border flex justify-between items-center bg-card/60">
+                    <h3 class="font-semibold text-main">Add New User</h3>
+                    <button class="text-muted hover:text-main transition-colors" onclick="document.getElementById('user-modal').classList.add('hidden')">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
                 <form id="add-user-form" class="p-5 space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">First Name</label>
-                            <input type="text" name="first_name" required class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                            <label class="block text-xs font-medium text-muted mb-1">First Name</label>
+                            <input type="text" name="first_name" required class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Last Name</label>
-                            <input type="text" name="last_name" required class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                            <label class="block text-xs font-medium text-muted mb-1">Last Name</label>
+                            <input type="text" name="last_name" required class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Username</label>
-                        <input type="text" name="user_name" required class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                        <label class="block text-xs font-medium text-muted mb-1">Username</label>
+                        <input type="text" name="user_name" required class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Email</label>
-                        <input type="email" name="email" required class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                        <label class="block text-xs font-medium text-muted mb-1">Email</label>
+                        <input type="email" name="email" required class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
-                        <input type="password" name="password" required class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                        <label class="block text-xs font-medium text-muted mb-1">Password</label>
+                        <input type="password" name="password" required class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Role</label>
-                            <select name="role" required class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue">
+                            <label class="block text-xs font-medium text-muted mb-1">Role</label>
+                            <select name="role" required class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green">
                                 <option value="community_reporter">Community Reporter</option>
                                 <option value="agency_operator">Agency Operator</option>
                                 <option value="government_official">Gov Official</option>
@@ -337,14 +337,14 @@ window.UserManagementPage = {
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1">Region</label>
-                            <input type="text" name="region" class="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-brand-blue" placeholder="e.g. Oromia">
+                            <label class="block text-xs font-medium text-muted mb-1">Region</label>
+                            <input type="text" name="region" class="w-full bg-card border border-border rounded px-3 py-2 text-sm text-main focus:outline-none focus:border-brand-green" placeholder="e.g. Oromia">
                         </div>
                     </div>
                 </form>
-                <div class="p-4 border-t border-border bg-slate-900/50 flex justify-end gap-2">
-                    <button class="px-4 py-2 text-sm text-slate-300 hover:text-white transition-colors" onclick="document.getElementById('user-modal').classList.add('hidden')">Cancel</button>
-                    <button id="btn-submit-user" class="px-4 py-2 text-sm bg-brand-blue hover:bg-brand-blueDark text-white rounded shadow transition-colors">Create User</button>
+                <div class="p-4 border-t border-border bg-card/60 flex justify-end gap-2">
+                    <button class="px-4 py-2 text-sm text-muted hover:text-main transition-colors" onclick="document.getElementById('user-modal').classList.add('hidden')">Cancel</button>
+                    <button id="btn-submit-user" class="px-4 py-2 text-sm bg-brand-green hover:bg-brand-greenDark text-white font-medium rounded shadow transition-colors">Create User</button>
                 </div>
             </div>
         `;
