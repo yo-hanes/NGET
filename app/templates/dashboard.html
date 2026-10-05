@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Negarit ET</title>
     
+    <!-- Favicon & Brand Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/icons/favicon-16x16.png">
+    <link rel="shortcut icon" href="/static/icons/favicon.ico">
+    <link rel="manifest" href="/static/icons/site.webmanifest">
+    
     <script>
         (function() {
             try {
@@ -62,7 +69,8 @@
     <!-- Sidebar -->
     <aside id="app-sidebar" class="fixed lg:static inset-y-0 left-0 w-72 bg-sidebar border-r border-border transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50 flex flex-col shadow-xl lg:shadow-none">
         <div class="h-16 flex items-center justify-between px-6 border-b border-white/15 shrink-0">
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-3">
+                <img src="/static/icons/apple-touch-icon.png" alt="Negarit Logo" class="w-8 h-8 rounded-lg shadow-sm object-cover">
                 <span class="font-bold text-lg tracking-tight text-white">Negarit ET</span>
                 <span class="px-2 py-0.5 rounded text-xs font-semibold bg-white/20 text-white border border-white/30 backdrop-blur-sm">v1.0</span>
             </div>
@@ -81,10 +89,14 @@
         
         <!-- Header -->
         <header id="app-header" class="h-16 bg-header border-b border-border flex items-center justify-between px-4 lg:px-6 shrink-0 z-20">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 sm:gap-4">
                 <button id="btn-hamburger" class="lg:hidden text-slate-400 hover:text-main">
                     <i data-lucide="menu" class="w-6 h-6"></i>
                 </button>
+                <div class="lg:hidden flex items-center gap-2">
+                    <img src="/static/icons/favicon-32x32.png" alt="Negarit Logo" class="w-6 h-6 rounded">
+                    <span class="font-bold text-sm text-main">Negarit ET</span>
+                </div>
                 
                 <div class="relative hidden sm:block w-64 md:w-80 lg:w-96">
                     <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
