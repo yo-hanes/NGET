@@ -735,17 +735,7 @@
             <!-- Registration Form State -->
             <div id="volunteer-form-container" class="relative z-10">
                 <div class="text-center mb-6">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-green/10 border border-brand-green/30 text-brand-green text-[10px] font-mono font-bold uppercase tracking-wider mb-3">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand-green animate-pulse"></span>
-                        <span>Community Response Mesh &bull; Free Registration</span>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-green/20 to-teal-500/10 border border-brand-green/30 text-brand-green flex items-center justify-center mx-auto mb-2 shadow-lg shadow-brand-green/10">
-                        <i data-lucide="heart-handshake" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-white tracking-tight">Join the Negarit Volunteer Mesh</h3>
-                    <p class="text-xs text-slate-300 mt-1 max-w-sm mx-auto leading-relaxed">
-                        Register to receive immediate SMS disaster alerts and protect families across your local woreda.
-                    </p>
+                    <h3 class="text-2xl font-extrabold text-white tracking-tight">Register</h3>
                 </div>
 
                 <form id="volunteer-reg-form" onsubmit="handleVolunteerSubmit(event)" class="space-y-4 text-xs">
@@ -815,15 +805,10 @@
                         </div>
                     </div>
 
-                    <div class="p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-2.5 text-[11px] text-slate-300">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-brand-green shrink-0"></i>
-                        <span>Zero fees &bull; Instant SMS alerting when natural hazards threaten your woreda</span>
-                    </div>
-
                     <button type="submit" id="vol-submit-btn" 
-                            class="w-full py-3.5 rounded-xl bg-brand-green hover:bg-brand-greenDark text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-green/25 hover:shadow-brand-green/40 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2">
+                            class="w-full py-3.5 rounded-xl bg-brand-green hover:bg-brand-greenDark text-white font-bold text-sm shadow-lg shadow-brand-green/25 hover:shadow-brand-green/40 transition-all flex items-center justify-center gap-2 cursor-pointer mt-4">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Complete Volunteer Registration</span>
+                        <span>Register</span>
                     </button>
                 </form>
             </div>
@@ -1171,7 +1156,7 @@
                 alert('Connection error: ' + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4 inline-block"></i> <span>Complete Volunteer Registration</span>';
+                btn.innerHTML = '<i data-lucide="user-plus" class="w-4 h-4 inline-block"></i> <span>Register</span>';
                 lucide.createIcons();
             }
         }
