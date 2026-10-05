@@ -127,19 +127,44 @@
             box-shadow: 0 16px 32px -5px rgba(44, 179, 74, 0.15);
         }
 
-        /* Light Mode Text Adjustments */
+        /* Comprehensive High-Contrast Typography System in Light Mode */
+        html:not(.dark) h1, 
+        html:not(.dark) h2, 
+        html:not(.dark) h3,
+        html:not(.dark) h4 {
+            color: #0F172A !important;
+        }
+
         html:not(.dark) .text-white:not(.keep-white) {
-            color: #0F172A;
+            color: #0F172A !important;
         }
-        html:not(.dark) .text-slate-100 {
-            color: #1E293B;
+        html:not(.dark) [class*="text-slate-100"]:not(.keep-white),
+        html:not(.dark) [class*="text-slate-200"]:not(.keep-white) {
+            color: #1E293B !important; /* Deep Slate-800 */
         }
-        html:not(.dark) .text-slate-300 {
-            color: #475569;
+        html:not(.dark) [class*="text-slate-300"]:not(.keep-white) {
+            color: #334155 !important; /* Crisp Slate-700 */
         }
-        html:not(.dark) .text-slate-400 {
-            color: #64748B;
+        html:not(.dark) [class*="text-slate-400"]:not(.keep-white) {
+            color: #475569 !important; /* Clear Slate-600 */
         }
+        html:not(.dark) [class*="text-slate-500"]:not(.keep-white) {
+            color: #64748B !important; /* Muted Slate-500 */
+        }
+
+        /* Prevent washed-out halo on light backgrounds */
+        html:not(.dark) .drop-shadow,
+        html:not(.dark) .drop-shadow-md,
+        html:not(.dark) .drop-shadow-lg {
+            filter: none !important;
+        }
+
+        /* Pill Badge Colors in Light Mode */
+        html:not(.dark) .text-amber-300 { color: #B45309 !important; }
+        html:not(.dark) .text-blue-300 { color: #1D4ED8 !important; }
+        html:not(.dark) .text-red-300 { color: #B91C1C !important; }
+        html:not(.dark) .text-purple-300 { color: #7E22CE !important; }
+        html:not(.dark) .text-emerald-300 { color: #047857 !important; }
 
         /* Light Mode Navbar */
         html:not(.dark) header {
@@ -395,39 +420,39 @@
             </div>
 
             <div class="relative z-10 max-w-6xl mx-auto text-center space-y-6">
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight drop-shadow-md">
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
                     Predict The Crisis. <br class="hidden sm:inline" />
-                    <span class="font-serif-italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-brand-green to-teal-300">
+                    <span class="font-serif-italic font-normal text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-brand-green to-teal-600 dark:from-emerald-400 dark:via-brand-green dark:to-teal-300">
                         Verify With Community.
                     </span>
                     Mobilize The Aid.
                 </h1>
 
-                <p class="max-w-4xl mx-auto text-base sm:text-lg text-slate-100/90 leading-relaxed font-normal drop-shadow">
-                    Negarit is an <strong>AI-powered climate early warning and disaster response platform</strong> that transforms every mobile phone into a life-saving alert device and a source of real-time community intelligence. Through <strong>geo-targeted SMS alerts</strong>, <strong>Video/Voice/USSD disaster reporting</strong>, <strong>real-time incident mapping</strong>, climate data, and <strong>AI-powered verification</strong>, Negarit helps communities receive timely warnings, report emergencies, and enables responders to act faster. By connecting communities, government agencies, humanitarian organizations, and emergency responders, Negarit strengthens climate adaptation, disaster preparedness, and community resilience across Ethiopia.
+                <p class="max-w-4xl mx-auto text-base sm:text-lg text-slate-700 dark:text-slate-100/90 leading-relaxed font-normal">
+                    Negarit is an <strong class="text-slate-900 dark:text-white font-semibold">AI-powered climate early warning and disaster response platform</strong> that transforms every mobile phone into a life-saving alert device and a source of real-time community intelligence. Through <strong class="text-slate-900 dark:text-white font-semibold">geo-targeted SMS alerts</strong>, <strong class="text-slate-900 dark:text-white font-semibold">Video/Voice/USSD disaster reporting</strong>, <strong class="text-slate-900 dark:text-white font-semibold">real-time incident mapping</strong>, climate data, and <strong class="text-slate-900 dark:text-white font-semibold">AI-powered verification</strong>, Negarit helps communities receive timely warnings, report emergencies, and enables responders to act faster. By connecting communities, government agencies, humanitarian organizations, and emergency responders, Negarit strengthens climate adaptation, disaster preparedness, and community resilience across Ethiopia.
                 </p>
 
                 <!-- Live Metrics Ticker -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto pt-2 text-left">
-                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
-                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Registered Volunteers</div>
+                    <div class="acrylic-card p-4 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Registered Volunteers</div>
                         <div class="text-2xl sm:text-3xl font-bold font-mono text-brand-green mt-1" id="hero-volunteer-count">14,850+</div>
-                        <div class="text-[11px] text-slate-400 mt-1">Across 12 regions</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Across 12 regions</div>
                     </div>
-                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
-                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Natural Hazards</div>
-                        <div class="text-2xl sm:text-3xl font-bold font-mono text-white mt-1">4 Models</div>
-                        <div class="text-[11px] text-slate-400 mt-1">Telemetry-calculated</div>
+                    <div class="acrylic-card p-4 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Natural Hazards</div>
+                        <div class="text-2xl sm:text-3xl font-bold font-mono text-slate-900 dark:text-white mt-1">4 Models</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Telemetry-calculated</div>
                     </div>
-                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
-                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Verification Accuracy</div>
+                    <div class="acrylic-card p-4 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Verification Accuracy</div>
                         <div class="text-2xl sm:text-3xl font-bold font-mono text-brand-green mt-1">100%</div>
-                        <div class="text-[11px] text-slate-400 mt-1">Cross-checked ground truth</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Cross-checked ground truth</div>
                     </div>
-                    <div class="acrylic-card p-4 rounded-xl border border-white/10">
-                        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Active Woredas</div>
-                        <div class="text-2xl sm:text-3xl font-bold font-mono text-amber-400 mt-1">48 Zones</div>
-                        <div class="text-[11px] text-slate-400 mt-1">Mesh response ready</div>
+                    <div class="acrylic-card p-4 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Active Woredas</div>
+                        <div class="text-2xl sm:text-3xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1">48 Zones</div>
+                        <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Mesh response ready</div>
                     </div>
                 </div>
 
@@ -531,8 +556,8 @@
             <div class="max-w-7xl mx-auto space-y-12">
                 <div class="text-center space-y-3">
                     <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">The Negarit Architecture</div>
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">How Negarit Operates in 4 Steps</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">How Negarit Operates in 4 Steps</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm max-w-2xl mx-auto">
                         From raw environmental telemetry to verified citizen action, every step is built to save lives while preventing false alarm panic.
                     </p>
                 </div>
@@ -544,14 +569,14 @@
                             <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/30 text-brand-cyan flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
                                 01
                             </div>
-                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 <span>AI Predicts 4 Disasters</span>
                             </h3>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Analyzes real-time Open-Meteo 16-day climate models and USGS earthquake feeds to calculate hazard risk scores for <strong>Drought, Flood, Landslides, and Earthquakes</strong> before they unfold.
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                Analyzes real-time Open-Meteo 16-day climate models and USGS earthquake feeds to calculate hazard risk scores for <strong class="text-slate-900 dark:text-white font-semibold">Drought, Flood, Landslides, and Earthquakes</strong> before they unfold.
                             </p>
                         </div>
-                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-brand-cyan font-mono flex items-center gap-1.5">
+                        <div class="pt-4 border-t border-slate-200/80 dark:border-white/10 mt-4 text-[11px] text-brand-cyan font-mono flex items-center gap-1.5">
                             <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 16-Day Forecast &amp; Rift Geophysics
                         </div>
                     </div>
@@ -559,17 +584,17 @@
                     <!-- Step 2 -->
                     <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
                         <div class="space-y-4">
-                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-500 dark:text-amber-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
                                 02
                             </div>
-                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 <span>Federal SMS Approval</span>
                             </h3>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Early warning cell broadcasts cannot be sent automatically. Federal government officials review drafted messages, inspect populations at risk, and <strong>must authorize</strong> before public release.
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                Early warning cell broadcasts cannot be sent automatically. Federal government officials review drafted messages, inspect populations at risk, and <strong class="text-slate-900 dark:text-white font-semibold">must authorize</strong> before public release.
                             </p>
                         </div>
-                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-amber-400 font-mono flex items-center gap-1.5">
+                        <div class="pt-4 border-t border-slate-200/80 dark:border-white/10 mt-4 text-[11px] text-amber-600 dark:text-amber-400 font-mono flex items-center gap-1.5">
                             <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Strict Verification Guardrail
                         </div>
                     </div>
@@ -577,17 +602,17 @@
                     <!-- Step 3 -->
                     <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
                         <div class="space-y-4">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
                                 03
                             </div>
-                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 <span>Verify With Community</span>
                             </h3>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Agencies are NOT notified just for hypothetical forecasts. When disaster strikes and reports come in, we cross-check weather data and <strong>verify with our local volunteer members</strong> on the ground.
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                Agencies are NOT notified just for hypothetical forecasts. When disaster strikes and reports come in, we cross-check weather data and <strong class="text-slate-900 dark:text-white font-semibold">verify with our local volunteer members</strong> on the ground.
                             </p>
                         </div>
-                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-emerald-400 font-mono flex items-center gap-1.5">
+                        <div class="pt-4 border-t border-slate-200/80 dark:border-white/10 mt-4 text-[11px] text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-1.5">
                             <i data-lucide="users" class="w-3.5 h-3.5"></i> Ground-Truth Volunteer Mesh
                         </div>
                     </div>
@@ -595,17 +620,17 @@
                     <!-- Step 4 -->
                     <div class="acrylic-card p-6 rounded-2xl relative flex flex-col justify-between acrylic-card-hover group">
                         <div class="space-y-4">
-                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-mono font-bold text-lg group-hover:scale-110 transition-transform">
                                 04
                             </div>
-                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 <span>Deploy Aid &amp; Hospitality</span>
                             </h3>
-                            <p class="text-xs text-slate-300 leading-relaxed">
-                                Once verified, we grant emergency agencies access to our GIS maps and weather telemetry, connecting them directly with local volunteer members to coordinate <strong>hospitality, food, and shelter</strong>.
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                                Once verified, we grant emergency agencies access to our GIS maps and weather telemetry, connecting them directly with local volunteer members to coordinate <strong class="text-slate-900 dark:text-white font-semibold">hospitality, food, and shelter</strong>.
                             </p>
                         </div>
-                        <div class="pt-4 border-t border-white/10 mt-4 text-[11px] text-purple-400 font-mono flex items-center gap-1.5">
+                        <div class="pt-4 border-t border-slate-200/80 dark:border-white/10 mt-4 text-[11px] text-purple-600 dark:text-purple-400 font-mono flex items-center gap-1.5">
                             <i data-lucide="truck" class="w-3.5 h-3.5"></i> Seamless Agency-Community Aid
                         </div>
                     </div>
@@ -618,71 +643,71 @@
             <div class="max-w-7xl mx-auto space-y-10">
                 <div class="text-center space-y-3">
                     <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Predictive Engine</div>
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">The Four Natural Disasters Negarit Predicts</h2>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">The Four Natural Disasters Negarit Predicts</h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Hazard 1: Drought -->
-                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/50 transition-all flex flex-col group">
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 hover:border-amber-500/50 transition-all flex flex-col group">
                         <div class="relative h-44 w-full overflow-hidden">
                             <img src="/static/images/drought.jpg" 
                                  alt="Drought" 
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30 hazard-img-vignette"></div>
-                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 backdrop-blur-md">
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 backdrop-blur-md">
                                 DROUGHT
                             </span>
                         </div>
                         <div class="p-4 sm:p-5">
-                            <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">Drought</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">Drought</h3>
                         </div>
                     </div>
 
                     <!-- Hazard 2: Flood -->
-                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-blue-500/50 transition-all flex flex-col group">
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 hover:border-blue-500/50 transition-all flex flex-col group">
                         <div class="relative h-44 w-full overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?q=80&w=800&auto=format&fit=crop" 
                                  alt="Flood" 
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30 hazard-img-vignette"></div>
-                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 backdrop-blur-md">
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/40 backdrop-blur-md">
                                 FLOOD
                             </span>
                         </div>
                         <div class="p-4 sm:p-5">
-                            <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">Flood</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Flood</h3>
                         </div>
                     </div>
 
                     <!-- Hazard 3: Landslides -->
-                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-red-500/50 transition-all flex flex-col group">
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 hover:border-red-500/50 transition-all flex flex-col group">
                         <div class="relative h-44 w-full overflow-hidden">
                             <img src="/static/images/landslide.jpg" 
                                  alt="Landslide" 
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30 hazard-img-vignette"></div>
-                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-500/40 backdrop-blur-md">
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-700 dark:text-red-300 border border-red-500/40 backdrop-blur-md">
                                 LANDSLIDE
                             </span>
                         </div>
                         <div class="p-4 sm:p-5">
-                            <h3 class="text-lg font-bold text-white group-hover:text-red-400 transition-colors">Landslide</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">Landslide</h3>
                         </div>
                     </div>
 
                     <!-- Hazard 4: Earthquake -->
-                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-purple-500/50 transition-all flex flex-col group">
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 hover:border-purple-500/50 transition-all flex flex-col group">
                         <div class="relative h-44 w-full overflow-hidden">
                             <img src="/static/images/earthquake.png" 
                                  alt="Earthquake" 
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30 hazard-img-vignette"></div>
-                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 backdrop-blur-md">
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/40 backdrop-blur-md">
                                 EARTHQUAKE
                             </span>
                         </div>
                         <div class="p-4 sm:p-5">
-                            <h3 class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">Earthquake</h3>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">Earthquake</h3>
                         </div>
                     </div>
                 </div>
@@ -694,10 +719,10 @@
             <div class="max-w-7xl mx-auto space-y-12">
                 <div class="text-center space-y-3">
                     <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Community In Action</div>
-                    <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+                    <h2 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                         National Disaster Intelligence and Community Intelligence Network
                     </h2>
-                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                    <p class="text-slate-600 dark:text-slate-400 text-sm max-w-2xl mx-auto">
                         Negarit members are local volunteers who step up before, during, and after disasters to support displaced families, guide arriving aid, and verify real-time data on the ground.
                     </p>
                 </div>
@@ -715,121 +740,121 @@
                                 FLOOD RELIEF &bull; GAMBELA
                             </span>
                             <div class="absolute bottom-4 left-4 right-4">
-                                <div class="text-[11px] text-slate-300 font-mono">Operations Log #084</div>
-                                <div class="text-lg font-bold text-white mt-0.5">Baro River Basin Evacuation</div>
+                                <div class="text-[11px] text-slate-200 font-mono keep-white">Operations Log #084</div>
+                                <div class="text-lg font-bold text-white mt-0.5 keep-white">Baro River Basin Evacuation</div>
                             </div>
                         </div>
-                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
+                        <div class="p-5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
                             <p>Local volunteers established 4 temporary highland hospitality sites for 1,200 families displaced by rising headwaters, serving warm meals and coordinating clean drinking water.</p>
-                            <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+                            <div class="pt-2 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px]">
                                 <span class="text-brand-green font-semibold flex items-center gap-1.5">
                                      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 32 Responders Deployed
                                 </span>
-                                <span class="font-mono text-slate-400">1,200 Sheltered</span>
+                                <span class="font-mono text-slate-500 dark:text-slate-400">1,200 Sheltered</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Bento Card 2: Highland Mountain Slope & Landslides (Gofa) -->
-                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-white/10 relative">
+                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-slate-200/80 dark:border-white/10 relative">
                         <div class="h-56 relative overflow-hidden">
                             <img src="/static/images/landslide.jpg" 
                                  alt="Mountain Slope Search and Rescue in Gofa" 
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-black/30 to-transparent bento-img-vignette"></div>
-                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-red/30 text-brand-red border border-brand-red/40 backdrop-blur-md">
+                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-red/20 text-brand-red border border-brand-red/40 backdrop-blur-md">
                                 SEARCH &amp; RESCUE &bull; GOFA
                             </span>
                             <div class="absolute bottom-4 left-4 right-4">
-                                <div class="text-[11px] text-slate-300 font-mono">Operations Log #092</div>
-                                <div class="text-lg font-bold text-white mt-0.5">Highland Slope Pre-Evacuation</div>
+                                <div class="text-[11px] text-slate-200 font-mono keep-white">Operations Log #092</div>
+                                <div class="text-lg font-bold text-white mt-0.5 keep-white">Highland Slope Pre-Evacuation</div>
                             </div>
                         </div>
-                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
+                        <div class="p-5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
                             <p>When shear stress reached critical levels, Negarit community scouts navigated steep hillside terrain to escort 45 elders and children to safe woredas before the slope failed.</p>
-                            <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+                            <div class="pt-2 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px]">
                                 <span class="text-brand-green font-semibold flex items-center gap-1.5">
                                      <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> 100% Pre-Evacuation
                                 </span>
-                                <span class="font-mono text-emerald-400 font-bold">Zero Fatalities</span>
+                                <span class="font-mono text-emerald-600 dark:text-emerald-400 font-bold">Zero Fatalities</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Bento Card 3: Pastoral Water Logistics (Afar & Somali) -->
-                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-white/10 relative">
+                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-slate-200/80 dark:border-white/10 relative">
                         <div class="h-56 relative overflow-hidden">
                             <img src="/static/images/drought.jpg" 
                                  alt="Pastoral Drought Water Logistics" 
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-black/30 to-transparent bento-img-vignette"></div>
-                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/30 text-amber-300 border border-amber-500/40 backdrop-blur-md">
+                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 backdrop-blur-md">
                                 WATER LOGISTICS &bull; AFAR
                             </span>
                             <div class="absolute bottom-4 left-4 right-4">
-                                <div class="text-[11px] text-slate-300 font-mono">Operations Log #105</div>
-                                <div class="text-lg font-bold text-white mt-0.5">Pastoral Water Trucking Units</div>
+                                <div class="text-[11px] text-slate-200 font-mono keep-white">Operations Log #105</div>
+                                <div class="text-lg font-bold text-white mt-0.5 keep-white">Pastoral Water Trucking Units</div>
                             </div>
                         </div>
-                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
+                        <div class="p-5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
                             <p>Arriving humanitarian water convoys were met by Negarit member guides who directed tankers to the most drought-parched pastoral settlement clusters, eliminating delays.</p>
-                            <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
-                                <span class="text-amber-400 font-semibold flex items-center gap-1.5">
+                            <div class="pt-2 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px]">
+                                <span class="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1.5">
                                      <i data-lucide="droplet" class="w-3.5 h-3.5"></i> 48,000 L / Day
                                 </span>
-                                <span class="font-mono text-slate-400">18 Convoys Guided</span>
+                                <span class="font-mono text-slate-500 dark:text-slate-400">18 Convoys Guided</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Bento Card 4: Operations Command Center & Satellite AI -->
-                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-white/10 relative">
+                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-slate-200/80 dark:border-white/10 relative">
                         <div class="h-56 relative overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1000&auto=format&fit=crop" 
                                  alt="National Emergency Command Center" 
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-black/30 to-transparent bento-img-vignette"></div>
-                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-500/30 text-purple-300 border border-purple-400/40 backdrop-blur-md">
+                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-400/40 backdrop-blur-md">
                                 COMMAND HUB &bull; ENSEMBLE AI
                             </span>
                             <div class="absolute bottom-4 left-4 right-4">
-                                <div class="text-[11px] text-slate-300 font-mono">Operations Log #118</div>
-                                <div class="text-lg font-bold text-white mt-0.5">National Multi-Sensor Feeds</div>
+                                <div class="text-[11px] text-slate-200 font-mono keep-white">Operations Log #118</div>
+                                <div class="text-lg font-bold text-white mt-0.5 keep-white">National Multi-Sensor Feeds</div>
                             </div>
                         </div>
-                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
+                        <div class="p-5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
                             <p>Open-Meteo 16-day climate forecasts and USGS real-time earthquake streams are ingested continuously to calculate woreda vulnerability with zero manual delay.</p>
-                            <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+                            <div class="pt-2 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px]">
                                 <span class="text-brand-green font-semibold flex items-center gap-1.5">
                                      <i data-lucide="cpu" class="w-3.5 h-3.5"></i> 98.2% Accuracy
                                 </span>
-                                <span class="font-mono text-slate-400">16-Day Horizon</span>
+                                <span class="font-mono text-slate-500 dark:text-slate-400">16-Day Horizon</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Bento Card 5: Community Hospitality & Shelter Care -->
-                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-white/10 relative">
+                    <div class="acrylic-card rounded-3xl overflow-hidden acrylic-card-hover group flex flex-col justify-between border border-slate-200/80 dark:border-white/10 relative">
                         <div class="h-56 relative overflow-hidden">
                             <img src="/static/images/earthquake.png" 
                                  alt="Rift Tremor Earthquake Shelter" 
                                  class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-black/30 to-transparent bento-img-vignette"></div>
-                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 backdrop-blur-md">
+                            <span class="absolute top-4 left-4 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-400/40 backdrop-blur-md">
                                 HOSPITALITY &bull; HAWASSA
                             </span>
                             <div class="absolute bottom-4 left-4 right-4">
-                                <div class="text-[11px] text-slate-300 font-mono">Operations Log #124</div>
-                                <div class="text-lg font-bold text-white mt-0.5">Rift Tremor Family Shelter</div>
+                                <div class="text-[11px] text-slate-200 font-mono keep-white">Operations Log #124</div>
+                                <div class="text-lg font-bold text-white mt-0.5 keep-white">Rift Tremor Family Shelter</div>
                             </div>
                         </div>
-                        <div class="p-5 text-xs text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
+                        <div class="p-5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-3 bg-[#0D1424]/90 bento-card-body">
                             <p>Following earthquake tremors, volunteer families opened community halls to provide bedding, infant care supplies, warm porridge, and psychological first aid.</p>
-                            <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px]">
+                            <div class="pt-2 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px]">
                                 <span class="text-brand-green font-semibold flex items-center gap-1.5">
                                     <i data-lucide="home" class="w-3.5 h-3.5"></i> 240 Neighbors Hosted
                                 </span>
-                                <span class="font-mono text-slate-400">12 Care Hubs</span>
+                                <span class="font-mono text-slate-500 dark:text-slate-400">12 Care Hubs</span>
                             </div>
                         </div>
                     </div>
@@ -844,23 +869,23 @@
                                 <span class="text-xs">🇪🇹</span>
                             </div>
                             <div>
-                                <div class="text-xs text-slate-400">Total Distributed Relief</div>
-                                <div class="text-3xl font-extrabold font-mono text-white mt-1">ETB 8,640,000</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">Total Distributed Relief</div>
+                                <div class="text-3xl font-extrabold font-mono text-slate-900 dark:text-white mt-1">ETB 8,640,000</div>
                                 <div class="text-[11px] text-brand-green font-semibold mt-0.5 flex items-center gap-1">
                                     <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> 1,240 Verified Beneficiary Transfers
                                 </div>
                             </div>
                             <div class="space-y-2 pt-2">
-                                <div class="flex justify-between text-[11px] text-slate-300 font-mono">
+                                <div class="flex justify-between text-[11px] text-slate-600 dark:text-slate-300 font-mono">
                                     <span>Target: ETB 10,000,000</span>
                                     <span class="text-brand-green font-bold">86.4%</span>
                                 </div>
-                                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                                <div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
                                     <div class="bg-brand-green h-full rounded-full" style="width: 86.4%"></div>
                                 </div>
                             </div>
                         </div>
-                        <button onclick="openVolunteerModal()" class="w-full mt-6 py-3 rounded-xl bg-brand-green hover:bg-brand-greenDark text-white font-bold text-xs sm:text-sm hover:shadow-lg hover:shadow-brand-green/20 transition-all flex items-center justify-center gap-2">
+                        <button onclick="openVolunteerModal()" class="w-full mt-6 py-3 rounded-xl bg-brand-green hover:bg-brand-greenDark text-white font-bold text-xs sm:text-sm hover:shadow-lg hover:shadow-brand-green/20 transition-all flex items-center justify-center gap-2 keep-white">
                             <i data-lucide="heart-handshake" class="w-4 h-4"></i>
                             <span>Join Our Response Network</span>
                         </button>
@@ -874,44 +899,44 @@
             <div class="max-w-7xl mx-auto space-y-10">
                 <div class="text-center space-y-3">
                     <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Community Roster</div>
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">The Negarit Volunteer Force</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">The Negarit Volunteer Force</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm max-w-2xl mx-auto">
                         14,850+ registered members across every region of Ethiopia, standing ready to assist.
                     </p>
                 </div>
 
                 <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center">
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Oromia</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">4,120</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Oromia</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">4,120</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Amhara</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">3,450</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Amhara</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">3,450</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Somali</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">2,180</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Somali</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">2,180</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Afar</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">1,640</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Afar</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">1,640</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">South</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">1,390</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">South</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">1,390</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Sidama</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">920</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Sidama</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">920</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Tigray</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">810</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Tigray</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">810</div>
                     </div>
-                    <div class="acrylic-card p-3 rounded-xl">
-                        <div class="text-xs text-slate-400 font-medium">Addis Ababa</div>
-                        <div class="text-lg font-bold font-mono text-white mt-0.5">340</div>
+                    <div class="acrylic-card p-3 rounded-xl border border-slate-200/80 dark:border-white/10">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 font-medium">Addis Ababa</div>
+                        <div class="text-lg font-bold font-mono text-slate-900 dark:text-white mt-0.5">340</div>
                     </div>
                 </div>
 
