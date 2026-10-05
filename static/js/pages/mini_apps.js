@@ -66,7 +66,7 @@ window.MiniAppsPage = {
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div class="flex items-center gap-2">
-              <h1 class="text-2xl font-extrabold text-white tracking-tight">Mini Apps Hub</h1>
+              <h1 class="text-2xl font-extrabold text-white tracking-tight">Mini Apps</h1>
               <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-brand-green/20 text-brand-green border border-brand-green/30">
                 4 Live Channels
               </span>

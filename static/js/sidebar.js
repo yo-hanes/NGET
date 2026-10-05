@@ -1,18 +1,18 @@
 window.Sidebar = {
     pages: {
-        'overview': { label: 'Executive Overview', icon: 'layout-dashboard', section: 'Intelligence' },
-        'map': { label: 'GIS & Spatial Telemetry', icon: 'map-pin', section: 'Intelligence' },
-        'disaster_analytics': { label: 'Disaster Risk Analytics', icon: 'alert-triangle', section: 'Intelligence' },
-        'model_tester': { label: 'Model Testing Sandbox', icon: 'flask-conical', section: 'Intelligence' },
+        'overview': { label: 'Overview', icon: 'layout-dashboard', section: 'Intelligence' },
+        'map': { label: 'Map', icon: 'map-pin', section: 'Intelligence' },
+        'disaster_analytics': { label: 'Disaster Analytics', icon: 'alert-triangle', section: 'Intelligence' },
+        'model_tester': { label: 'Model Tester', icon: 'flask-conical', section: 'Intelligence' },
         
-        'approval': { label: 'Approval Queue', icon: 'shield-check', section: 'Operations' },
-        'dispatch': { label: 'Dispatch & Operations', icon: 'truck', section: 'Operations' },
-        'resources': { label: 'Resources & Inventory', icon: 'package', section: 'Operations' },
+        'approval': { label: 'Approval', icon: 'shield-check', section: 'Operations' },
+        'dispatch': { label: 'Dispatch', icon: 'truck', section: 'Operations' },
+        'resources': { label: 'Resources', icon: 'package', section: 'Operations' },
         
-        'community': { label: 'Community & Reporters', icon: 'users', section: 'Community' },
-        'donations': { label: 'Donations & Relief', icon: 'heart', section: 'Community' },
-        'reports': { label: 'Reports & Evidence', icon: 'file-text', section: 'Community' },
-        'mini_apps': { label: 'Mini Apps Hub', icon: 'smartphone', section: 'Community' },
+        'community': { label: 'Community', icon: 'users', section: 'Community' },
+        'donations': { label: 'Donations', icon: 'heart', section: 'Community' },
+        'reports': { label: 'Reports', icon: 'file-text', section: 'Community' },
+        'mini_apps': { label: 'Mini Apps', icon: 'smartphone', section: 'Community' },
         
         'user_management': { label: 'User Management', icon: 'user-cog', section: 'Administration' },
         'activity_logs': { label: 'Activity Logs', icon: 'scroll-text', section: 'Administration' }

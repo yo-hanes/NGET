@@ -269,7 +269,7 @@ window.DisasterAnalyticsPage = {
               <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i> Cutoff: <strong class="text-amber-300 font-bold">> ${this.minProbability}%</strong>
             </span>
           </div>
-          <h1 class="text-2xl font-extrabold text-white tracking-tight">Disaster Risk Analytics</h1>
+          <h1 class="text-2xl font-extrabold text-white tracking-tight">Disaster Analytics</h1>
           <p class="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
             Multi-hazard predictive models correlating 16-day Open-Meteo climate telemetry and USGS East African Rift seismicity.
           </p>
