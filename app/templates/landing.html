@@ -401,74 +401,83 @@
             <div class="max-w-7xl mx-auto space-y-10">
                 <div class="text-center space-y-3">
                     <div class="badge-subtle inline-block px-3 py-1 rounded-full text-xs font-bold uppercase">Predictive Engine</div>
-                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">The 4 Natural Hazards Predicted by Negarit</h2>
-                    <p class="text-slate-400 text-sm max-w-2xl mx-auto">
-                        Telemetry from Open-Meteo climate sensors and USGS seismic streams continuously feed these 4 models.
-                    </p>
+                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">The Four Natural Disasters Negarit Predicts</h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- Hazard 1: Drought -->
-                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-amber-500">
-                        <div class="flex items-center justify-between">
-                            <span class="text-3xl">🌾</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">PASTORAL ARIDITY</span>
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-amber-500/50 transition-all flex flex-col group">
+                        <div class="relative h-44 w-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=800&auto=format&fit=crop" 
+                                 alt="Drought & Water Stress" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30"></div>
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 backdrop-blur-md">
+                                PASTORAL ARIDITY
+                            </span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Drought &amp; Water Stress</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Monitors topsoil moisture (0-7cm) &lt; 0.16 m³/m³ and 16-day rainfall deficits across Afar, Somali, and Borena pastoral regions.
-                        </p>
-                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
-                            <div class="text-slate-400">Trigger: <span class="text-amber-400">Soil &lt; 0.16 m³/m³</span></div>
-                            <div class="text-slate-400">Response: <span class="text-white">Water trucking &amp; forage</span></div>
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-2">
+                            <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">Drought &amp; Water Stress</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Monitors topsoil moisture (0-7cm) &lt; 0.16 m³/m³ and 16-day rainfall deficits across Afar, Somali, and Borena pastoral regions.
+                            </p>
                         </div>
                     </div>
 
                     <!-- Hazard 2: Flood -->
-                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-blue-500">
-                        <div class="flex items-center justify-between">
-                            <span class="text-3xl">🌊</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">RIVER BASIN SURGE</span>
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-blue-500/50 transition-all flex flex-col group">
+                        <div class="relative h-44 w-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?q=80&w=800&auto=format&fit=crop" 
+                                 alt="Flash Floods & Inundation" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30"></div>
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/40 backdrop-blur-md">
+                                RIVER BASIN SURGE
+                            </span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Flash Floods &amp; Inundation</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Flags 24h rainfall &gt; 25mm combined with saturated soil along Awash River, Baro Catchment, and Lake Tana tributaries.
-                        </p>
-                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
-                            <div class="text-slate-400">Trigger: <span class="text-blue-400">Rain &gt; 25mm / 24h</span></div>
-                            <div class="text-slate-400">Response: <span class="text-white">Basin evacuation &amp; shelter</span></div>
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-2">
+                            <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">Flash Floods &amp; Inundation</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Flags 24h rainfall &gt; 25mm combined with saturated soil along Awash River, Baro Catchment, and Lake Tana tributaries.
+                            </p>
                         </div>
                     </div>
 
                     <!-- Hazard 3: Landslides -->
-                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-red-500">
-                        <div class="flex items-center justify-between">
-                            <span class="text-3xl">⛰️</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">SLOPE INSTABILITY</span>
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-red-500/50 transition-all flex flex-col group">
+                        <div class="relative h-44 w-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=800&auto=format&fit=crop" 
+                                 alt="Highland Landslides" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30"></div>
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-300 border border-red-500/40 backdrop-blur-md">
+                                SLOPE INSTABILITY
+                            </span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Highland Landslides</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Calculates Highland Shear Stress (Daily Rain × 1.5 + Soil Saturation × 50) on steep mountain slopes in Gofa, North Shewa, and Simien.
-                        </p>
-                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
-                            <div class="text-slate-400">Trigger: <span class="text-red-400">Rain &gt; 85mm &amp; Saturation</span></div>
-                            <div class="text-slate-400">Response: <span class="text-white">Hillside evacuation &amp; SAR</span></div>
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-2">
+                            <h3 class="text-lg font-bold text-white group-hover:text-red-400 transition-colors">Highland Landslides</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Calculates Highland Shear Stress (Daily Rain × 1.5 + Soil Saturation × 50) on steep mountain slopes in Gofa, North Shewa, and Simien.
+                            </p>
                         </div>
                     </div>
 
                     <!-- Hazard 4: Earthquake -->
-                    <div class="acrylic-card p-6 rounded-2xl space-y-4 border-l-4 border-l-purple-500">
-                        <div class="flex items-center justify-between">
-                            <span class="text-3xl">🌋</span>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">TECTONIC RIFT</span>
+                    <div class="acrylic-card rounded-2xl overflow-hidden border border-white/10 hover:border-purple-500/50 transition-all flex flex-col group">
+                        <div class="relative h-44 w-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop" 
+                                 alt="Seismic Rift Activity" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0D1424] via-transparent to-black/30"></div>
+                            <span class="absolute top-3 right-3 px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 backdrop-blur-md">
+                                TECTONIC RIFT
+                            </span>
                         </div>
-                        <h3 class="text-lg font-bold text-white">Seismic Rift Activity</h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Streams USGS real-time seismic sensors along the Main Ethiopian Rift, tracking tremors and active fault shifts from Hawassa to Afar.
-                        </p>
-                        <div class="bg-black/30 p-3 rounded-lg border border-white/5 space-y-1 font-mono text-[11px]">
-                            <div class="text-slate-400">Trigger: <span class="text-purple-400">Magnitude &ge; M4.5</span></div>
-                            <div class="text-slate-400">Response: <span class="text-white">Structural inspection &amp; safety</span></div>
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-2">
+                            <h3 class="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">Seismic Rift Activity</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Streams USGS real-time seismic sensors along the Main Ethiopian Rift, tracking tremors and active fault shifts from Hawassa to Afar.
+                            </p>
                         </div>
                     </div>
                 </div>
