@@ -22,10 +22,30 @@ window.MapTelemetryPage = {
         recenterBtn.addEventListener('click', () => window.MapController.recenter());
       }
 
+      // Responsive resize & orientation listeners for mobile devices
+      window.addEventListener('resize', () => {
+        if (window.MapController) window.MapController.invalidateSize();
+      });
+      window.addEventListener('orientationchange', () => {
+        setTimeout(() => {
+          if (window.MapController) window.MapController.invalidateSize();
+        }, 200);
+      });
+
       this.initialized = true;
     }
 
+    // Always invalidate size on tab activation (handles mobile visibility transition)
+    setTimeout(() => {
+      if (window.MapController) window.MapController.invalidateSize();
+    }, 100);
+
     await this.loadTelemetryForCity(this.currentCity);
+
+    // Ensure tiles render completely after telemetry layout stabilizes
+    setTimeout(() => {
+      if (window.MapController) window.MapController.invalidateSize();
+    }, 300);
   },
 
   async selectCity(city) {

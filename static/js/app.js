@@ -55,6 +55,10 @@ window.App = {
             window.OverviewPage.init();
         } else if (pageKey === 'map' && window.MapTelemetryPage) {
             window.MapTelemetryPage.init();
+            if (window.MapController) {
+                setTimeout(() => window.MapController.invalidateSize(), 150);
+                setTimeout(() => window.MapController.invalidateSize(), 400);
+            }
         } else if (pageKey === 'disaster_analytics' && window.DisasterAnalyticsPage) {
             window.DisasterAnalyticsPage.init();
         } else if (pageKey === 'approval' && window.ApprovalQueuePage) {

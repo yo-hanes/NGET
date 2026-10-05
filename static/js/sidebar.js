@@ -122,6 +122,9 @@ window.Sidebar = {
         const close = () => {
             sidebar.classList.add('-translate-x-full');
             overlay.classList.add('hidden');
+            setTimeout(() => {
+                if (window.MapController) window.MapController.invalidateSize();
+            }, 300);
         };
         
         this.closeMobileDrawer = close;

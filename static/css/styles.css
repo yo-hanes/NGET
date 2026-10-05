@@ -420,6 +420,29 @@ html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
    LEAFLET MAP FLUENT STYLING OVERRIDES
    ========================================================================== */
 
+#leaflet-map {
+    width: 100% !important;
+    min-height: 340px !important;
+    height: 100% !important;
+    display: block !important;
+    position: relative !important;
+    z-index: 0;
+}
+
+@media (max-width: 1024px) {
+    #leaflet-map {
+        min-height: 360px !important;
+        height: 380px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    #leaflet-map {
+        min-height: 320px !important;
+        height: 340px !important;
+    }
+}
+
 .leaflet-container {
     background: var(--bg-canvas) !important;
     font-family: inherit !important;
