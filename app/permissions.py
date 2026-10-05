@@ -49,7 +49,9 @@ DEFAULT_PERMISSIONS_MATRIX = {
 async def get_user_permissions(db, role: str) -> list[str]:
     cursor = await db.execute("SELECT page_key FROM role_permissions WHERE role = ? AND has_access = 1", (role,))
     rows = await cursor.fetchall()
-    return [row['page_key'] for row in rows]
+    keys = [row['page_key'] for row in rows]
+    key_order = {k: i for i, k in enumerate(ALL_PAGE_KEYS)}
+    return sorted(keys, key=lambda k: key_order.get(k, 999))
 
 def check_page_access(permissions: list[str], page_key: str) -> bool:
     return page_key in permissions

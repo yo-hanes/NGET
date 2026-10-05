@@ -1,6 +1,6 @@
 window.Sidebar = {
     pages: {
-        'overview': { label: 'Overview', icon: 'layout-dashboard', section: 'Intelligence' },
+        'overview': { label: 'Overview', icon: 'layout-dashboard', section: null },
         'map': { label: 'Map', icon: 'map-pin', section: 'Intelligence' },
         'disaster_analytics': { label: 'Disaster Analytics', icon: 'alert-triangle', section: 'Intelligence' },
         'model_tester': { label: 'Model Tester', icon: 'flask-conical', section: 'Intelligence' },
@@ -23,11 +23,32 @@ window.Sidebar = {
         nav.innerHTML = '';
         
         const allowed = PermissionManager.getAllowedPages();
+
+        // 1. Overview at the very top of sidebar navigation
+        if (allowed.includes('overview')) {
+            const overviewPage = this.pages['overview'];
+            const btn = document.createElement('button');
+            btn.className = 'sidebar-tab-btn mb-2.5 font-semibold';
+            btn.setAttribute('data-tab', 'overview');
+            btn.innerHTML = `
+                <i data-lucide="${overviewPage.icon}" class="w-4 h-4"></i>
+                <span class="flex-1 text-left truncate">${overviewPage.label}</span>
+                <span class="badge-count hidden bg-white/20 text-white px-1.5 py-0.5 rounded text-[10px] font-bold"></span>
+            `;
+            btn.addEventListener('click', () => {
+                window.App.switchTab('overview');
+                this.closeMobileDrawer();
+            });
+            nav.appendChild(btn);
+        }
+
+        // 2. Section navigation in defined page order
         const sections = {};
-        
-        allowed.forEach(key => {
+        Object.keys(this.pages).forEach(key => {
+            if (key === 'overview') return;
+            if (!allowed.includes(key)) return;
             const page = this.pages[key];
-            if (!page) return;
+            if (!page || !page.section) return;
             if (!sections[page.section]) sections[page.section] = [];
             sections[page.section].push({ key, ...page });
         });
@@ -39,7 +60,7 @@ window.Sidebar = {
             if (!items || items.length === 0) return;
             
             const secHeader = document.createElement('div');
-            secHeader.className = 'text-[10px] font-bold text-white/70 uppercase tracking-wider px-3 mt-4 mb-2';
+            secHeader.className = 'text-[10px] font-bold text-white/70 uppercase tracking-wider px-3 mt-3 mb-2';
             secHeader.textContent = secName;
             nav.appendChild(secHeader);
             

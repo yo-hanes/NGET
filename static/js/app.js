@@ -6,7 +6,9 @@ window.App = {
         window.Sidebar.init();
         window.Header.init();
 
-        const hash = window.location.hash.replace('#', '') || PermissionManager.getAllowedPages()[0];
+        const allowed = PermissionManager.getAllowedPages();
+        const defaultTab = allowed.includes('overview') ? 'overview' : (allowed[0] || 'overview');
+        const hash = window.location.hash.replace('#', '') || defaultTab;
         
         window.addEventListener('hashchange', () => {
             const newHash = window.location.hash.replace('#', '');
@@ -113,7 +115,8 @@ window.App = {
         this.showToast('Access denied to this module.', 'error');
         const allowed = PermissionManager.getAllowedPages();
         if (allowed.length > 0) {
-            this.switchTab(allowed[0]);
+            const fallback = allowed.includes('overview') ? 'overview' : allowed[0];
+            this.switchTab(fallback);
         }
     }
 };
