@@ -44,6 +44,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/static/js/engines/weather_api.js"></script>
 
     <style>
         body {
@@ -51,6 +52,14 @@
             background-color: #060D1A;
             color: #F8FAFC;
             overflow-x: hidden;
+        }
+
+        /* Dark tactical filter for OpenStreetMap tiles (no API key required, pure dark theme) */
+        #showcase-map .leaflet-tile {
+            filter: brightness(0.65) invert(1) contrast(2.5) hue-rotate(185deg) saturate(0.4) brightness(0.8);
+        }
+        #showcase-map .leaflet-container {
+            background: #060D1A !important;
         }
 
         .font-serif-italic {
@@ -1138,14 +1147,22 @@
         }
         fetchLiveVolunteerCount();
 
-        // Initialize Showcase GIS Map of Ethiopia
-        function initShowcaseMap() {
+        // Initialize Showcase GIS Map using the platform's WeatherAPI & USGS telemetry
+        async function initShowcaseMap() {
             const mapEl = document.getElementById('showcase-map');
             if (!mapEl || typeof L === 'undefined') return;
 
+            const mapCfg = (window.WeatherAPI && window.WeatherAPI.CONFIG && window.WeatherAPI.CONFIG.MAP) ? 
+                           window.WeatherAPI.CONFIG.MAP : {
+                               INITIAL_LAT: 9.145,
+                               INITIAL_LON: 38.752,
+                               INITIAL_ZOOM: 6,
+                               TILE_LAYER: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                           };
+
             const map = L.map('showcase-map', {
-                center: [9.145, 39.8],
-                zoom: 6,
+                center: [mapCfg.INITIAL_LAT, mapCfg.INITIAL_LON],
+                zoom: mapCfg.INITIAL_ZOOM,
                 minZoom: 5,
                 maxZoom: 10,
                 zoomControl: false,
@@ -1153,35 +1170,45 @@
                 attributionControl: false
             });
 
-            // Modern Dark Matter Tiles
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                subdomains: 'abcd',
+            // Use the exact OpenStreetMap tile API used in the Map module
+            L.tileLayer(mapCfg.TILE_LAYER, {
                 maxZoom: 19
             }).addTo(map);
 
-            // Hazard Warning Zones in Ethiopia
+            const riskGroup = L.layerGroup().addTo(map);
+            const cityGroup = L.layerGroup().addTo(map);
+            const seismicGroup = L.layerGroup().addTo(map);
+
+            // 1. Critical Hazard Warning Zones (aligned with Map page)
             const zones = [
-                { name: "Afar Thermal & Tectonic Swarm", lat: 11.79, lon: 41.01, radius: 95000, color: "#EF373E", fill: "#EF373E" },
-                { name: "Baro River Basin Inundation", lat: 8.25, lon: 34.58, radius: 80000, color: "#F59E0B", fill: "#F59E0B" },
-                { name: "Gofa Highlands Slope Saturated", lat: 6.30, lon: 36.90, radius: 70000, color: "#EF373E", fill: "#EF373E" },
-                { name: "Somali Pastoral Drought Corridor", lat: 6.50, lon: 43.50, radius: 110000, color: "#F59E0B", fill: "#F59E0B" },
-                { name: "Tigray Fault & Rift Line", lat: 13.50, lon: 39.47, radius: 85000, color: "#2CB34A", fill: "#2CB34A" }
+                { name: "Tigray Fault Zone", lat: 13.50, lon: 39.47, radius: 85000, color: "#2CB34A", fill: "#2CB34A", type: "Seismic & Drought Alert" },
+                { name: "Afar Aridity & Tectonic Swarm", lat: 11.79, lon: 41.01, radius: 95000, color: "#EF373E", fill: "#EF373E", type: "Severe Aridity & Seismic Cluster" },
+                { name: "Gofa Highlands Slope Watch", lat: 6.30, lon: 36.88, radius: 75000, color: "#EF373E", fill: "#EF373E", type: "Landslide Risk Zone" },
+                { name: "Awash Basin Inundation Corridor", lat: 8.98, lon: 40.15, radius: 80000, color: "#F59E0B", fill: "#F59E0B", type: "Flash Flood Watch" },
+                { name: "Baro River Overflow Sector", lat: 8.25, lon: 34.58, radius: 70000, color: "#F59E0B", fill: "#F59E0B", type: "Riverine Basin Inundation" },
+                { name: "Somali Pastoral Drought Corridor", lat: 6.50, lon: 43.50, radius: 110000, color: "#F59E0B", fill: "#F59E0B", type: "Borehole Water Stress" }
             ];
 
             zones.forEach(z => {
-                L.circle([z.lat, z.lon], {
+                const circle = L.circle([z.lat, z.lon], {
                     radius: z.radius,
                     color: z.color,
                     fillColor: z.fill,
                     fillOpacity: 0.22,
                     weight: 1.5,
-                    dashArray: '4, 4'
-                }).addTo(map);
+                    dashArray: '4, 6'
+                }).addTo(riskGroup);
+
+                circle.bindTooltip(`<b>${z.name}</b><br><span style="font-size:11px;color:#cbd5e1">${z.type}</span>`, {
+                    direction: 'top'
+                });
             });
 
-            // Ethiopian Telemetry Hubs
-            const cities = [
-                { name: 'Addis Ababa', lat: 9.03, lon: 38.74, hub: true },
+            // 2. Ethiopian Telemetry Hubs from WeatherAPI.CONFIG.CITIES
+            const cities = (window.WeatherAPI && window.WeatherAPI.CONFIG && window.WeatherAPI.CONFIG.CITIES) ?
+                           window.WeatherAPI.CONFIG.CITIES.slice(0, 10) : [
+                { name: 'Addis Ababa', lat: 9.03, lon: 38.74 },
+                { name: 'Adama', lat: 8.54, lon: 39.27 },
                 { name: 'Hawassa', lat: 7.06, lon: 38.48 },
                 { name: 'Dire Dawa', lat: 9.60, lon: 41.86 },
                 { name: 'Mekelle', lat: 13.50, lon: 39.47 },
@@ -1202,8 +1229,32 @@
                     iconSize: [90, 20],
                     iconAnchor: [5, 10]
                 });
-                L.marker([c.lat, c.lon], { icon }).addTo(map);
+                L.marker([c.lat, c.lon], { icon }).addTo(cityGroup);
             });
+
+            // 3. Live USGS Earthquake Feeds (same API as Map page)
+            if (window.WeatherAPI && window.WeatherAPI.fetchEarthquakes) {
+                try {
+                    const seismic = await window.WeatherAPI.fetchEarthquakes();
+                    if (seismic && seismic.features) {
+                        seismic.features.slice(0, 8).forEach(f => {
+                            const coords = f.geometry.coordinates;
+                            const mag = f.properties.mag ? f.properties.mag.toFixed(1) : "3.5";
+                            const eqIcon = L.divIcon({
+                                html: `<div style="position:relative;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#9333EA;border:2px solid #fff;color:#fff;font-size:9px;font-weight:800;font-family:monospace;box-shadow:0 0 10px #9333EA;">${mag}</div>`,
+                                iconSize: [22, 22],
+                                iconAnchor: [11, 11]
+                            });
+                            const marker = L.marker([coords[1], coords[0]], { icon: eqIcon }).addTo(seismicGroup);
+                            marker.bindTooltip(`<b>M${mag} Rift Earthquake</b><br><span style="font-size:10px;color:#e2e8f0">${f.properties.title || 'Seismic Event'}</span>`, {
+                                direction: 'top'
+                            });
+                        });
+                    }
+                } catch (e) {
+                    console.warn('Seismic feed note:', e);
+                }
+            }
 
             setTimeout(() => {
                 if (map) map.invalidateSize();
