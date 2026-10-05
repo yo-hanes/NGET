@@ -11,7 +11,7 @@ class VolunteerCreate(BaseModel):
     email: Optional[str] = None
     region: str
     woreda: str
-    skills: str
+    skills: Optional[str] = "Community Volunteer"
 
 @router.get("")
 @router.get("/")
