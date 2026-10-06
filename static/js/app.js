@@ -7,7 +7,7 @@ window.App = {
         window.Header.init();
 
         const allowed = PermissionManager.getAllowedPages();
-        const defaultTab = allowed.includes('overview') ? 'overview' : (allowed[0] || 'overview');
+        const defaultTab = allowed.includes('map') ? 'map' : (allowed.includes('overview') ? 'overview' : (allowed[0] || 'map'));
         const hash = window.location.hash.replace('#', '') || defaultTab;
         
         window.addEventListener('hashchange', () => {
@@ -119,7 +119,7 @@ window.App = {
         this.showToast('Access denied to this module.', 'error');
         const allowed = PermissionManager.getAllowedPages();
         if (allowed.length > 0) {
-            const fallback = allowed.includes('overview') ? 'overview' : allowed[0];
+            const fallback = allowed.includes('map') ? 'map' : (allowed.includes('overview') ? 'overview' : allowed[0]);
             this.switchTab(fallback);
         }
     }

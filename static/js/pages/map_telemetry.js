@@ -12,11 +12,16 @@ window.MapTelemetryPage = {
   initialized: false,
 
   async init() {
+    // Ensure default active country is Ethiopia
+    if (!window.WeatherAPI.activeCountryCode || window.WeatherAPI.activeCountryCode !== 'ethiopia') {
+      window.WeatherAPI.setActiveCountry('ethiopia', false);
+    }
     const activeCountry = window.WeatherAPI.getActiveCountry();
     const cities = window.WeatherAPI.getCities(activeCountry.code);
+    const addisCity = cities.find(c => c.id === 'addis') || cities[0] || window.WeatherAPI.COUNTRIES.ethiopia.cities[0];
 
     if (!this.initialized) {
-      this.currentCity = cities[0] || window.WeatherAPI.COUNTRIES.ethiopia.cities[0];
+      this.currentCity = addisCity;
 
       window.MapController.init('leaflet-map', (selectedCity) => {
         this.selectCity(selectedCity);
@@ -51,10 +56,13 @@ window.MapTelemetryPage = {
     }, 100);
 
     if (!this.currentCity || this.currentCity.countryCode !== activeCountry.code) {
-      this.currentCity = cities[0];
+      this.currentCity = addisCity;
     }
 
-    await this.loadTelemetryForCity(this.currentCity);
+    await this.selectCity(this.currentCity);
+    if (window.MapController && this.currentCity) {
+      window.MapController.focusCity(this.currentCity);
+    }
 
     setTimeout(() => {
       if (window.MapController) window.MapController.invalidateSize();
