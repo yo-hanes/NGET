@@ -634,35 +634,60 @@ html:not(.dark) td {
 }
 
 /* Override text-white on headings, paragraphs, labels, spans, divs in light mode 
-   unless they are inside solid colored buttons, solid badges, dark chips, or #app-sidebar */
-html:not(.dark) h1.text-white:not(#app-sidebar *),
-html:not(.dark) h2.text-white:not(#app-sidebar *),
-html:not(.dark) h3.text-white:not(#app-sidebar *),
-html:not(.dark) h4.text-white:not(#app-sidebar *),
-html:not(.dark) p.text-white:not(#app-sidebar *),
-html:not(.dark) strong.text-white:not(#app-sidebar *),
+   unless they are inside solid colored buttons, solid badges, dark chips, or active tabs */
+html:not(.dark) h1.text-white:not(.active-tab *),
+html:not(.dark) h2.text-white:not(.active-tab *),
+html:not(.dark) h3.text-white:not(.active-tab *),
+html:not(.dark) h4.text-white:not(.active-tab *),
+html:not(.dark) p.text-white:not(.active-tab *),
+html:not(.dark) strong.text-white:not(.active-tab *),
 html:not(.dark) td.text-white,
-html:not(.dark) div.text-white:not(#app-sidebar *):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]):not([class*="bg-slate-950"]),
-html:not(.dark) span.text-white:not(#app-sidebar *):not(.badge-count):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]):not([class*="bg-slate-950"]) {
+html:not(.dark) div.text-white:not(.active-tab *):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]):not([class*="bg-slate-950"]),
+html:not(.dark) span.text-white:not(.active-tab *):not(.badge-count):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]):not([class*="bg-slate-950"]) {
     color: var(--text-heading) !important;
 }
 
 /* Buttons that have text-white but transparent or card backgrounds */
-html:not(.dark) button.text-white:not(#app-sidebar *):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]),
-html:not(.dark) a.text-white:not(#app-sidebar *):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]) {
+html:not(.dark) button.text-white:not(.active-tab):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]),
+html:not(.dark) a.text-white:not(.active-tab):not([class*="bg-brand"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-green"]):not([class*="bg-blue"]):not([class*="bg-purple"]):not([class*="bg-amber"]):not([class*="bg-black"]) {
     color: var(--text-heading) !important;
 }
 
+/* Sidebar typography in Light Mode - High-contrast readable dark slate */
 html:not(.dark) #app-sidebar {
-    color: #FFFFFF !important;
+    color: var(--text-main) !important;
 }
 
-html:not(.dark) #app-sidebar span:not(.active-tab *):not(.badge-count) {
-    color: #FFFFFF !important;
+html:not(.dark) #app-sidebar .sidebar-tab-btn:not(.active-tab) {
+    color: #334155 !important; /* Slate 700 - crisp, highly legible */
 }
 
-html:not(.dark) #app-sidebar button:not(.active-tab) {
-    color: rgba(255, 255, 255, 0.9) !important;
+html:not(.dark) #app-sidebar .sidebar-tab-btn:not(.active-tab) span {
+    color: #334155 !important;
+}
+
+html:not(.dark) #app-sidebar .sidebar-tab-btn:not(.active-tab) i {
+    color: #64748B !important; /* Slate 500 */
+}
+
+/* Inactive button hover in Light Mode */
+html:not(.dark) #app-sidebar:not(.theme-red) .sidebar-tab-btn:not(.active-tab):hover,
+html:not(.dark) #app-sidebar:not(.theme-red) .sidebar-tab-btn:not(.active-tab):hover span,
+html:not(.dark) #app-sidebar:not(.theme-red) .sidebar-tab-btn:not(.active-tab):hover i {
+    color: #1A702D !important; /* Ethiopian green hover */
+}
+
+html:not(.dark) #app-sidebar.theme-red .sidebar-tab-btn:not(.active-tab):hover,
+html:not(.dark) #app-sidebar.theme-red .sidebar-tab-btn:not(.active-tab):hover span,
+html:not(.dark) #app-sidebar.theme-red .sidebar-tab-btn:not(.active-tab):hover i {
+    color: #C52228 !important; /* Ethiopian red hover */
+}
+
+/* Active Tab in Light Mode stays crisp white text on colored solid pill */
+html:not(.dark) #app-sidebar .sidebar-tab-btn.active-tab,
+html:not(.dark) #app-sidebar .sidebar-tab-btn.active-tab span,
+html:not(.dark) #app-sidebar .sidebar-tab-btn.active-tab i {
+    color: #FFFFFF !important;
 }
 
 html:not(.dark) .hover\:text-white:hover {
