@@ -163,6 +163,41 @@ html.dark .bg-sidebar, html.dark #app-sidebar {
     box-shadow: 4px 0 24px -4px rgba(0, 0, 0, 0.4);
 }
 
+/* Pan-African Dynamic Country Theme (Red Theme for Regional Expansion Nations) */
+#app-sidebar.theme-red,
+.country-theme-red #app-sidebar {
+    background: linear-gradient(180deg, #EF373E 0%, #C52228 100%) !important;
+    box-shadow: 4px 0 24px -4px rgba(239, 55, 62, 0.35) !important;
+}
+
+html.dark #app-sidebar.theme-red,
+html.dark .country-theme-red #app-sidebar {
+    background: linear-gradient(180deg, #D7262D 0%, #8E161B 100%) !important;
+    box-shadow: 4px 0 24px -4px rgba(0, 0, 0, 0.5) !important;
+}
+
+#app-sidebar.theme-red .sidebar-tab-btn.active-tab,
+html.dark #app-sidebar.theme-red .sidebar-tab-btn.active-tab,
+.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab,
+html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab {
+    color: #DC2626 !important;
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+}
+
+#app-sidebar.theme-red .sidebar-tab-btn.active-tab i,
+html.dark #app-sidebar.theme-red .sidebar-tab-btn.active-tab i,
+.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i,
+html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i {
+    color: #DC2626 !important;
+}
+
+#app-sidebar.theme-red .sidebar-tab-btn.active-tab .badge-count,
+.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab .badge-count {
+    background-color: rgba(239, 55, 62, 0.16) !important;
+    color: #DC2626 !important;
+}
+
 .bg-header, #app-header {
     background: var(--layer1-bg) !important;
     backdrop-filter: var(--layer1-blur);

@@ -1,7 +1,8 @@
 /**
- * NEGARIT ET - MAP & TELEMETRY PAGE CONTROLLER
+ * NEGARIT ET - PAN-AFRICAN MAP & TELEMETRY PAGE CONTROLLER
  * Connects spatial Leaflet maps, 16-day Open-Meteo telemetry,
- * real-time USGS earthquake markers, and bento KPI cards.
+ * real-time USGS earthquake markers, multi-country regional filter,
+ * and dynamic country color branding.
  */
 
 window.MapTelemetryPage = {
@@ -11,16 +12,17 @@ window.MapTelemetryPage = {
   initialized: false,
 
   async init() {
+    const activeCountry = window.WeatherAPI.getActiveCountry();
+    const cities = window.WeatherAPI.getCities(activeCountry.code);
+
     if (!this.initialized) {
-      this.currentCity = window.WeatherAPI.CONFIG.CITIES[0]; // Addis Ababa
+      this.currentCity = cities[0] || window.WeatherAPI.COUNTRIES.ethiopia.cities[0];
+
       window.MapController.init('leaflet-map', (selectedCity) => {
         this.selectCity(selectedCity);
       });
 
-      const recenterBtn = document.getElementById('btn-recenter');
-      if (recenterBtn) {
-        recenterBtn.addEventListener('click', () => window.MapController.recenter());
-      }
+      this.setupControls();
 
       // Responsive resize & orientation listeners for mobile devices
       window.addEventListener('resize', () => {
@@ -32,24 +34,143 @@ window.MapTelemetryPage = {
         }, 200);
       });
 
+      // Synchronize when country changes from any other view (e.g. Analytics)
+      window.addEventListener('negarit:country-changed', (e) => {
+        this.onCountryChanged(e.detail.countryCode, false);
+      });
+
       this.initialized = true;
+    } else {
+      // Ensure dropdowns are synced with active country
+      this.syncCountryDropdown(activeCountry.code);
     }
 
-    // Always invalidate size on tab activation (handles mobile visibility transition)
+    // Invalidate size on tab activation
     setTimeout(() => {
       if (window.MapController) window.MapController.invalidateSize();
     }, 100);
 
+    if (!this.currentCity || this.currentCity.countryCode !== activeCountry.code) {
+      this.currentCity = cities[0];
+    }
+
     await this.loadTelemetryForCity(this.currentCity);
 
-    // Ensure tiles render completely after telemetry layout stabilizes
     setTimeout(() => {
       if (window.MapController) window.MapController.invalidateSize();
     }, 300);
   },
 
+  setupControls() {
+    const countrySelect = document.getElementById('map-country-select');
+    const citySelect = document.getElementById('map-city-select');
+    const recenterBtn = document.getElementById('btn-recenter');
+
+    if (recenterBtn) {
+      recenterBtn.addEventListener('click', () => window.MapController.recenter());
+    }
+
+    if (countrySelect) {
+      countrySelect.value = window.WeatherAPI.activeCountryCode;
+      countrySelect.addEventListener('change', (e) => {
+        this.onCountryChanged(e.target.value, true);
+      });
+    }
+
+    this.populateCitySelect();
+
+    if (citySelect) {
+      citySelect.addEventListener('change', (e) => {
+        const cityId = e.target.value;
+        const cities = window.WeatherAPI.getCities();
+        const city = cities.find(c => c.id === cityId);
+        if (city) {
+          window.MapController.focusCity(city);
+          this.selectCity(city);
+        }
+      });
+    }
+  },
+
+  syncCountryDropdown(countryCode) {
+    const countrySelect = document.getElementById('map-country-select');
+    if (countrySelect && countrySelect.value !== countryCode) {
+      countrySelect.value = countryCode;
+      this.populateCitySelect();
+    }
+    this.updateCountryBadge(countryCode);
+  },
+
+  populateCitySelect() {
+    const citySelect = document.getElementById('map-city-select');
+    if (!citySelect) return;
+
+    const cities = window.WeatherAPI.getCities();
+    citySelect.innerHTML = '';
+
+    cities.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = `${c.name} (${c.region || c.elevation})`;
+      citySelect.appendChild(opt);
+    });
+
+    if (this.currentCity) {
+      citySelect.value = this.currentCity.id;
+    }
+  },
+
+  async onCountryChanged(countryCode, notifyEngine = true) {
+    if (notifyEngine) {
+      window.WeatherAPI.setActiveCountry(countryCode, true);
+    }
+
+    const country = window.WeatherAPI.COUNTRIES[countryCode] || window.WeatherAPI.COUNTRIES.ethiopia;
+    const cities = country.cities;
+
+    // Switch Map geographic view and markers
+    window.MapController.switchCountry(countryCode);
+
+    // Update City dropdown
+    this.populateCitySelect();
+    this.updateCountryBadge(countryCode);
+
+    // Pick first city of the new country
+    const firstCity = cities[0];
+    if (firstCity) {
+      this.currentCity = firstCity;
+      const citySelect = document.getElementById('map-city-select');
+      if (citySelect) citySelect.value = firstCity.id;
+      await this.loadTelemetryForCity(firstCity);
+    }
+  },
+
+  updateCountryBadge(countryCode) {
+    const country = window.WeatherAPI.COUNTRIES[countryCode] || window.WeatherAPI.COUNTRIES.ethiopia;
+    const badge = document.getElementById('map-country-badge');
+    if (!badge) return;
+
+    const isRedTheme = country.theme === 'red';
+    badge.textContent = `${country.flag} ${country.name} GIS Hub`;
+
+    if (isRedTheme) {
+      badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-brand-red/15 text-brand-red border border-brand-red/30';
+    } else {
+      badge.className = 'px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-brand-green/15 text-brand-green border border-brand-green/30';
+    }
+  },
+
   async selectCity(city) {
     this.currentCity = city;
+
+    const cityLabel = document.getElementById('map-active-city-label');
+    if (cityLabel) cityLabel.textContent = city.name;
+
+    const citySelect = document.getElementById('map-city-select');
+    if (citySelect && city.id !== 'custom') {
+      citySelect.value = city.id;
+    }
+
     await this.loadTelemetryForCity(city);
   },
 
@@ -59,8 +180,8 @@ window.MapTelemetryPage = {
 
     try {
       const [telemetry, seismic] = await Promise.all([
-        window.WeatherAPI.fetchForecast(city.lat, city.lon),
-        this.latestSeismic ? Promise.resolve(this.latestSeismic) : window.WeatherAPI.fetchEarthquakes()
+        window.WeatherAPI.fetchForecast(city.lat, city.lon, city.id),
+        window.WeatherAPI.fetchEarthquakes()
       ]);
 
       this.latestTelemetry = telemetry;
@@ -81,10 +202,7 @@ window.MapTelemetryPage = {
       // Render 1-2 Line AI Model Location Summary
       this.renderLocationSummary(city, telemetry, seismic);
 
-      // Update header national highlights if available
-      this.updateNationalStats();
-
-      // Recalculate disaster predictive models for the selected city
+      // Recalculate disaster predictive models for the selected city if view is active
       if (window.DisasterAnalyticsPage && !document.getElementById('view-disaster-analytics')?.classList.contains('hidden')) {
         window.DisasterAnalyticsPage.init();
       }
@@ -133,11 +251,11 @@ window.MapTelemetryPage = {
       const rain = daily.precipitation_sum[idx];
       const hum = daily.relative_humidity_2m_mean ? daily.relative_humidity_2m_mean[idx] : 50;
 
-      const rainClass = rain > 10 ? 'text-brand-red font-semibold' : (rain > 2 ? 'text-brand-blue' : 'text-slate-400');
+      const rainClass = rain > 10 ? 'text-brand-red font-semibold' : (rain > 2 ? 'text-brand-green font-semibold' : 'text-slate-400');
 
       html += `
-        <div class="flex-shrink-0 w-28 p-3 rounded-lg border border-border/70 bg-card/60 flex flex-col items-center text-center gap-1 hover:border-brand-blue transition-colors">
-          <div class="text-xs font-medium ${idx === 0 ? 'text-brand-blue font-bold' : 'text-slate-300'}">${dayName}</div>
+        <div class="flex-shrink-0 w-28 p-3 rounded-lg border border-border/70 bg-card/60 flex flex-col items-center text-center gap-1 hover:border-brand-green transition-colors">
+          <div class="text-xs font-medium ${idx === 0 ? 'text-brand-green font-bold' : 'text-slate-300'}">${dayName}</div>
           <div class="text-[10px] text-slate-500">${t.slice(5)}</div>
           <div class="my-1">
             <span class="text-sm font-bold text-white">${maxT}°</span>
@@ -152,76 +270,51 @@ window.MapTelemetryPage = {
     container.innerHTML = html;
   },
 
-  async updateNationalStats() {
-    try {
-      const stats = await window.WeatherAPI.fetchNationalHighlights();
-      const peakTempEl = document.getElementById('stat-peak-temp');
-      const peakTempLoc = document.getElementById('stat-peak-temp-loc');
-      const peakRainEl = document.getElementById('stat-peak-rain');
-      const peakRainLoc = document.getElementById('stat-peak-rain-loc');
-
-      if (peakTempEl) peakTempEl.textContent = `${stats.highestTemp}°C`;
-      if (peakTempLoc) peakTempLoc.textContent = stats.highestTempCity;
-      if (peakRainEl) peakRainEl.textContent = `${stats.highestRain}mm`;
-      if (peakRainLoc) peakRainLoc.textContent = stats.highestRainCity;
-    } catch (e) {
-      // Non-critical
-    }
-  },
-
   renderLocationSummary(city, telemetry, seismic) {
+    const summaryCard = document.getElementById('map-location-summary-card');
+    const summaryTitle = document.getElementById('map-summary-title');
     const summaryBadge = document.getElementById('map-summary-badge');
     const summaryText = document.getElementById('map-model-summary-text');
-    const summaryTitle = document.getElementById('map-summary-title');
-
     if (!summaryText) return;
 
+    let topHazard = null;
+    let highestProb = 0;
+
+    if (window.DisasterPredictionEngine && telemetry && telemetry.current && telemetry.daily) {
+      const preds = window.DisasterPredictionEngine.predictAll(
+        telemetry.current,
+        telemetry.daily,
+        seismic,
+        city.name
+      );
+      if (preds && preds.length > 0) {
+        topHazard = preds[0];
+        highestProb = topHazard.probability;
+      }
+    }
+
     if (summaryTitle) {
-      summaryTitle.textContent = `AI Predictive Summary • ${city.name}`;
+      summaryTitle.textContent = `${city.name} • Predictive Summary`;
     }
 
-    if (!window.DisasterPredictionEngine || !telemetry || !telemetry.current || !telemetry.daily) {
-      summaryText.textContent = `Connecting multivariate models to ${city.name} telemetry stream...`;
-      return;
-    }
-
-    const predictions = window.DisasterPredictionEngine.predictAll(
-      telemetry.current,
-      telemetry.daily,
-      seismic,
-      city.name
-    );
-
-    // Sort by risk score descending
-    predictions.sort((a, b) => b.riskScore - a.riskScore);
-
-    const top = predictions[0];
-    const second = predictions[1];
-
-    if (top.riskScore >= 60) {
+    if (topHazard && highestProb >= 60) {
       if (summaryBadge) {
-        summaryBadge.textContent = top.riskScore >= 75 ? 'CRITICAL ALERT' : 'HIGH RISK WATCH';
-        summaryBadge.className = top.riskScore >= 75 
-          ? 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-red/15 text-brand-red border border-brand-red/40 animate-pulse'
-          : 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500 border border-amber-500/40';
+        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-red/15 text-brand-red border border-brand-red/30 animate-pulse';
+        summaryBadge.textContent = `${highestProb}% ${topHazard.severity.toUpperCase()} RISK`;
       }
-      const secondClause = (second && second.riskScore >= 55) ? ` Secondary watch: ${second.name.split('&')[0]} (${second.riskScore}%).` : '';
-      summaryText.innerHTML = `⚠️ <strong class="text-main">${city.name}:</strong> AI models project <span class="text-amber-500 font-semibold">${top.riskScore}% ${top.name}</span> risk (${top.predictedWindow}). Primary driver: <span class="font-mono text-main">${top.keyIndicator}</span>.${secondClause} Protocol: <span class="text-muted italic">${top.protocol}</span>`;
-    } else if (top.riskScore >= 45) {
+      summaryText.textContent = `High Alert: ${topHazard.hazardName} model is flagging a ${highestProb}% event probability across ${city.name} (${topHazard.description || 'Elevated climate anomalies detected'}). Recommended immediate woreda readiness.`;
+    } else if (topHazard && highestProb >= 35) {
       if (summaryBadge) {
-        summaryBadge.textContent = 'ELEVATED ADVISORY';
-        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-yellow-500/20 text-yellow-600 dark:text-yellow-300 border border-yellow-500/30';
+        summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30';
+        summaryBadge.textContent = `${highestProb}% MODERATE`;
       }
-      summaryText.innerHTML = `⚠️ <strong class="text-main">${city.name}:</strong> Moderate <span class="text-yellow-600 dark:text-yellow-300 font-semibold">${top.name}</span> watch (${top.riskScore}%). Driven by <span class="font-mono text-main">${top.keyIndicator}</span>. Soil moisture and runoff remain under observation.`;
+      summaryText.textContent = `Elevated Watch: ${topHazard.hazardName} indicates ${highestProb}% likelihood for ${city.name}. Meteorological parameters remain within observation limits with normal soil saturation.`;
     } else {
       if (summaryBadge) {
-        summaryBadge.textContent = 'NORMAL STABLE';
         summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-green/15 text-brand-green border border-brand-green/30';
+        summaryBadge.textContent = `NORMAL RISK`;
       }
-      const soilVal = (telemetry.current?.soil_moisture_0_to_7cm || 0.28).toFixed(3);
-      summaryText.innerHTML = `✅ <strong class="text-main">${city.name}:</strong> All 5 predictive disaster models report baseline stability. Current rainfall, temperature, and soil saturation (<span class="font-mono text-main">${soilVal} m³/m³</span>) are within safe seasonal thresholds.`;
+      summaryText.textContent = `Stable Telemetry: All 16-day hydrological, thermal, and seismic risk curves for ${city.name} are baseline. Zero critical anomaly thresholds exceeded.`;
     }
   }
 };
-
-

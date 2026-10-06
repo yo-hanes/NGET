@@ -1,6 +1,6 @@
 /**
- * NEGARIT ET - DISASTER RISK ANALYTICS CONTROLLER (OS-GRADE CLEAN UI)
- * Evaluates multivariate predictive models across ALL 20 Ethiopian administrative hubs.
+ * NEGARIT ET - PAN-AFRICAN DISASTER RISK ANALYTICS CONTROLLER (OS-GRADE CLEAN UI)
+ * Evaluates multivariate predictive models across African regional expansion hubs.
  * Default probability filter: > 60% (High / Critical Risk).
  */
 
@@ -16,6 +16,7 @@ window.DisasterAnalyticsPage = {
 
   async init() {
     this.setupEventListeners();
+    this.syncCountryDropdown();
 
     if (this.isLoaded && this.allPredictions.length > 0) {
       this.applyFilters();
@@ -28,7 +29,28 @@ window.DisasterAnalyticsPage = {
   setupEventListeners() {
     if (this.eventsAttached) return;
 
-    // 1. Preset Buttons (>60%, >75%, >40%, All)
+    // 1. Pan-African Country Selector
+    const countrySelect = document.getElementById('analytics-country-select');
+    if (countrySelect) {
+      countrySelect.value = window.WeatherAPI.activeCountryCode;
+      countrySelect.addEventListener('change', async (e) => {
+        await this.onCountryChanged(e.target.value);
+      });
+    }
+
+    // Synchronize if country was changed on the Map page
+    window.addEventListener('negarit:country-changed', async (e) => {
+      const newCountry = e.detail.countryCode;
+      const select = document.getElementById('analytics-country-select');
+      if (select && select.value !== newCountry) {
+        select.value = newCountry;
+      }
+      this.isLoaded = false;
+      this.allPredictions = [];
+      await this.loadAllPredictions();
+    });
+
+    // 2. Preset Buttons (>60%, >75%, >40%, All)
     const presetBtns = document.querySelectorAll('.prob-preset-btn');
     presetBtns.forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -40,7 +62,7 @@ window.DisasterAnalyticsPage = {
       });
     });
 
-    // 2. Custom Range Slider
+    // 3. Custom Range Slider
     const slider = document.getElementById('prob-range-slider');
     if (slider) {
       slider.addEventListener('input', (e) => {
@@ -51,7 +73,7 @@ window.DisasterAnalyticsPage = {
       });
     }
 
-    // 3. Search Bar
+    // 4. Search Bar
     const searchInput = document.getElementById('disaster-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -60,7 +82,7 @@ window.DisasterAnalyticsPage = {
       });
     }
 
-    // 4. Hazard Category Dropdown
+    // 5. Hazard Category Dropdown
     const hazardSelect = document.getElementById('disaster-hazard-filter');
     if (hazardSelect) {
       hazardSelect.addEventListener('change', (e) => {
@@ -69,7 +91,7 @@ window.DisasterAnalyticsPage = {
       });
     }
 
-    // 5. Reset to Default (>60%)
+    // 6. Reset to Default (>60%)
     const resetBtn = document.getElementById('btn-reset-filters');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
@@ -78,6 +100,20 @@ window.DisasterAnalyticsPage = {
     }
 
     this.eventsAttached = true;
+  },
+
+  syncCountryDropdown() {
+    const countrySelect = document.getElementById('analytics-country-select');
+    if (countrySelect) {
+      countrySelect.value = window.WeatherAPI.activeCountryCode;
+    }
+  },
+
+  async onCountryChanged(countryCode) {
+    window.WeatherAPI.setActiveCountry(countryCode, true);
+    this.isLoaded = false;
+    this.allPredictions = [];
+    await this.loadAllPredictions();
   },
 
   updatePresetButtons(activeProb) {
@@ -114,7 +150,7 @@ window.DisasterAnalyticsPage = {
         badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-500/20 text-slate-300 border border-slate-500/30';
       } else {
         badge.textContent = `Active: > ${activeProb}%`;
-        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-blue/20 text-brand-cyan border border-brand-blue/30';
+        badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-brand-green/20 text-brand-green border border-brand-green/30';
       }
     }
   },
@@ -138,14 +174,29 @@ window.DisasterAnalyticsPage = {
     if (this.isLoading) return;
     this.isLoading = true;
 
+    const country = window.WeatherAPI.getActiveCountry();
+    const cities = country.cities;
+    const countryPrefix = country.code === 'ethiopia' ? 'ET' :
+                          (country.code === 'kenya' ? 'KE' :
+                          (country.code === 'south_africa' ? 'ZA' :
+                          (country.code === 'drc' ? 'CD' :
+                          (country.code === 'egypt' ? 'EG' :
+                          (country.code === 'lesotho' ? 'LS' :
+                          (country.code === 'mozambique' ? 'MZ' : 'TZ'))))));
+
+    const subtitle = document.getElementById('analytics-subtitle');
+    if (subtitle) {
+      subtitle.textContent = `Evaluated across ${cities.length} regional hubs & climate corridors in ${country.name} (${country.flag})`;
+    }
+
     const tbody = document.getElementById('disaster-table-body');
     if (tbody) {
       tbody.innerHTML = `
         <tr>
           <td colspan="7" class="px-4 py-12 text-center text-slate-400">
             <div class="flex flex-col items-center justify-center gap-3">
-              <div class="w-7 h-7 border-2 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
-              <div class="text-xs font-mono">Running multivariate disaster risk radar across all 20 Ethiopian hubs...</div>
+              <div class="w-7 h-7 border-2 border-brand-green border-t-transparent rounded-full animate-spin"></div>
+              <div class="text-xs font-mono">Running multivariate disaster risk radar across all ${cities.length} ${country.name} hubs...</div>
             </div>
           </td>
         </tr>
@@ -153,16 +204,15 @@ window.DisasterAnalyticsPage = {
     }
 
     const countBadge = document.getElementById('threat-match-count');
-    if (countBadge) countBadge.textContent = 'Scanning 20 administrative hubs...';
+    if (countBadge) countBadge.textContent = `Scanning ${cities.length} ${country.name} hubs...`;
 
     try {
-      const cities = window.WeatherAPI?.CONFIG?.CITIES || [];
-      const seismic = window.MapTelemetryPage?.latestSeismic || await window.WeatherAPI.fetchEarthquakes();
+      const seismic = await window.WeatherAPI.fetchEarthquakes();
 
       const allResults = [];
       let threatIndex = 1;
 
-      // Evaluate predictions across all 20 Ethiopian cities
+      // Evaluate predictions across the country's cities
       for (let i = 0; i < cities.length; i++) {
         const city = cities[i];
         let telemetry = null;
@@ -191,7 +241,8 @@ window.DisasterAnalyticsPage = {
               cityElevation: city.elevation,
               cityLat: city.lat,
               cityLon: city.lon,
-              threatCode: `#ET-${100 + threatIndex++}`
+              countryCode: country.code,
+              threatCode: `#${countryPrefix}-${100 + threatIndex++}`
             });
           });
         }
@@ -204,7 +255,7 @@ window.DisasterAnalyticsPage = {
       this.isLoaded = true;
       this.applyFilters();
     } catch (err) {
-      console.error("Failed to load national predictions:", err);
+      console.error("Failed to load regional predictions:", err);
       if (tbody) {
         tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-red-400">Failed to calculate threat matrix: ${err.message}</td></tr>`;
       }
@@ -218,303 +269,235 @@ window.DisasterAnalyticsPage = {
 
     let filtered = this.allPredictions.filter(p => {
       // 1. Probability Cutoff
-      const matchesProb = this.minProbability === 0 ? p.riskScore >= 0 : p.riskScore > this.minProbability;
-      if (!matchesProb) return false;
+      if (p.probability < this.minProbability) return false;
 
-      // 2. Hazard Type Filter
-      if (this.hazardFilter !== 'all' && p.id !== this.hazardFilter) {
-        return false;
-      }
+      // 2. Hazard Category Filter
+      if (this.hazardFilter !== 'all' && p.hazardCategory !== this.hazardFilter) return false;
 
-      // 3. Search Query (City, Region, Hazard Name, or Indicator)
+      // 3. Search Query (City, Region, Threat Code, Hazard)
       if (this.searchQuery) {
         const q = this.searchQuery;
-        const haystack = `${p.cityName} ${p.cityRegion} ${p.name} ${p.keyIndicator} ${p.protocol}`.toLowerCase();
-        if (!haystack.includes(q)) return false;
+        const match = 
+          p.cityName.toLowerCase().includes(q) ||
+          (p.cityRegion && p.cityRegion.toLowerCase().includes(q)) ||
+          p.hazardName.toLowerCase().includes(q) ||
+          p.threatCode.toLowerCase().includes(q);
+        if (!match) return false;
       }
 
       return true;
     });
 
     this.filteredPredictions = filtered;
+    this.renderKPIs(filtered);
+    this.renderThreatCards(filtered);
+    this.renderTable(filtered);
 
-    // Update match count indicator
+    // Update match count badge
     const countBadge = document.getElementById('threat-match-count');
     if (countBadge) {
-      const probText = this.minProbability === 0 ? 'All' : `> ${this.minProbability}%`;
-      countBadge.innerHTML = `Showing <strong class="text-white">${filtered.length}</strong> of ${this.allPredictions.length} threats (${probText})`;
+      countBadge.textContent = `${filtered.length} Threat${filtered.length === 1 ? '' : 's'} Detected`;
     }
-
-    this.renderHeader();
-    this.renderSummaryCards();
-    this.renderThreatTable();
   },
 
-  renderHeader() {
-    const banner = document.querySelector('#view-disaster-analytics .disaster-analytics-header');
-    if (!banner) return;
+  renderKPIs(filtered) {
+    const total = filtered.length;
+    let extremeCount = 0;
+    let highCount = 0;
+    let popAtRisk = 0;
 
-    const criticalCount = this.filteredPredictions.filter(p => p.riskScore >= 75).length;
-    const highCount = this.filteredPredictions.filter(p => p.riskScore >= 60 && p.riskScore < 75).length;
-    const elevatedCount = this.filteredPredictions.filter(p => p.riskScore >= 45 && p.riskScore < 60).length;
-
-    banner.innerHTML = `
-      <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-        <div>
-          <div class="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-blue/20 text-brand-cyan border border-brand-blue/30 uppercase tracking-wider">
-              NATIONAL PREDICTIVE RADAR &bull; 20 HUBS
-            </span>
-            <span class="text-xs text-slate-400 flex items-center gap-1 font-mono">
-              <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-400"></i> Cutoff: <strong class="text-amber-300 font-bold">> ${this.minProbability}%</strong>
-            </span>
-          </div>
-          <h1 class="text-2xl font-extrabold text-white tracking-tight">Disaster Analytics</h1>
-          <p class="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-            Multi-hazard predictive models correlating 16-day Open-Meteo climate telemetry and USGS East African Rift seismicity.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2 shrink-0 flex-wrap">
-          <div class="px-3 py-1.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            <span>${criticalCount} Critical (≥ 75%)</span>
-          </div>
-          <div class="px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-            <span>${highCount} High (60-74%)</span>
-          </div>
-          <div class="px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-brand-cyan text-xs font-semibold flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-brand-cyan"></span>
-            <span>${this.filteredPredictions.length} Matching Threats</span>
-          </div>
-        </div>
-      </div>
-    `;
-    if (window.lucide) window.lucide.createIcons();
-  },
-
-  renderSummaryCards() {
-    const container = document.getElementById('disaster-summary-cards');
-    if (!container) return;
-
-    if (!this.filteredPredictions.length) {
-      container.innerHTML = `
-        <div class="col-span-full glass-card p-6 text-center rounded-2xl border border-border">
-          <div class="text-sm font-semibold text-white">No threats found above ${this.minProbability}% probability threshold</div>
-          <p class="text-xs text-slate-400 mt-1">Try lowering the probability filter cutoff or selecting another hazard category.</p>
-        </div>
-      `;
-      return;
-    }
-
-    // Top Hazard Frequency
-    const hazardCounts = {};
-    const regionScores = {};
-    let totalScore = 0;
-
-    this.filteredPredictions.forEach(p => {
-      hazardCounts[p.name.split('&')[0].trim()] = (hazardCounts[p.name.split('&')[0].trim()] || 0) + 1;
-      regionScores[p.cityRegion] = (regionScores[p.cityRegion] || 0) + p.riskScore;
-      totalScore += p.riskScore;
+    filtered.forEach(p => {
+      if (p.severity === 'critical') extremeCount++;
+      if (p.severity === 'high') highCount++;
+      
+      if (p.severity === 'critical') popAtRisk += 450000;
+      else if (p.severity === 'high') popAtRisk += 180000;
+      else popAtRisk += 45000;
     });
 
-    const topHazard = Object.entries(hazardCounts).sort((a, b) => b[1] - a[1])[0] || ['None', 0];
-    const topRegion = Object.entries(regionScores).sort((a, b) => b[1] - a[1])[0] || ['None', 0];
-    const criticalCount = this.filteredPredictions.filter(p => p.riskScore >= 75).length;
-    const avgConfidence = (totalScore / this.filteredPredictions.length).toFixed(1);
+    const elTotal = document.getElementById('kpi-total-threats');
+    if (elTotal) elTotal.textContent = total;
 
-    container.innerHTML = `
-      <!-- Card 1: Active Threats -->
-      <div class="glass-card p-4 rounded-2xl border border-border flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Threats</span>
-          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-            <i data-lucide="flame" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-3xl font-extrabold text-white font-mono">${this.filteredPredictions.length}</div>
-          <div class="text-[11px] text-amber-300 mt-0.5">Threshold: > ${this.minProbability}% probability</div>
-        </div>
-      </div>
+    const elExtreme = document.getElementById('kpi-extreme-threats');
+    if (elExtreme) elExtreme.textContent = extremeCount;
 
-      <!-- Card 2: Critical Tier -->
-      <div class="glass-card p-4 rounded-2xl border border-border flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Critical (≥ 75%)</span>
-          <div class="p-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
-            <i data-lucide="alert-octagon" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-3xl font-extrabold text-red-400 font-mono">${criticalCount}</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">Immediate intervention priority</div>
-        </div>
-      </div>
+    const elHigh = document.getElementById('kpi-high-threats');
+    if (elHigh) elHigh.textContent = highCount;
 
-      <!-- Card 3: Dominant Hazard -->
-      <div class="glass-card p-4 rounded-2xl border border-border flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Top Threat Type</span>
-          <div class="p-2 rounded-xl bg-brand-blue/15 text-brand-cyan border border-brand-blue/30">
-            <i data-lucide="radar" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-lg font-bold text-white truncate" title="${topHazard[0]}">${topHazard[0]}</div>
-          <div class="text-[11px] text-brand-cyan mt-0.5">${topHazard[1]} locations affected</div>
-        </div>
-      </div>
-
-      <!-- Card 4: Most Vulnerable Zone -->
-      <div class="glass-card p-4 rounded-2xl border border-border flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Vulnerable Zone</span>
-          <div class="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            <i data-lucide="map-pin" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-lg font-bold text-white truncate" title="${topRegion[0]}">${topRegion[0]}</div>
-          <div class="text-[11px] text-purple-300 mt-0.5">Cumulative risk epicenter</div>
-        </div>
-      </div>
-
-      <!-- Card 5: Mean Risk Index -->
-      <div class="glass-card p-4 rounded-2xl border border-border flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Mean Risk Score</span>
-          <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <i data-lucide="activity" class="w-4 h-4"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-3xl font-extrabold text-white font-mono">${avgConfidence}%</div>
-          <div class="text-[11px] text-emerald-400 mt-0.5">Multivariate composite mean</div>
-        </div>
-      </div>
-    `;
-
-    if (window.lucide) window.lucide.createIcons();
+    const elPop = document.getElementById('kpi-pop-risk');
+    if (elPop) {
+      elPop.textContent = popAtRisk > 1000000 ? `${(popAtRisk / 1000000).toFixed(1)}M+` : `${(popAtRisk / 1000).toFixed(0)}k+`;
+    }
   },
 
-  renderThreatTable() {
-    const tbody = document.getElementById('disaster-table-body');
-    if (!tbody) return;
+  renderThreatCards(filtered) {
+    const container = document.getElementById('disaster-cards-container');
+    if (!container) return;
 
-    if (!this.filteredPredictions.length) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7" class="px-4 py-12 text-center text-slate-400">
-            <div class="flex flex-col items-center justify-center gap-2">
-              <i data-lucide="filter-x" class="w-8 h-8 text-slate-500"></i>
-              <div class="text-sm font-semibold text-white">No Threat Matches Above ${this.minProbability}%</div>
-              <p class="text-xs text-slate-400">Adjust the probability filter or search terms above to see more Ethiopian locations.</p>
-              <button onclick="window.DisasterAnalyticsPage.resetFilters()" class="mt-2 px-3 py-1.5 rounded-lg bg-brand-blue/20 text-brand-cyan border border-brand-blue/30 text-xs font-semibold hover:bg-brand-blue/30 transition-colors">
-                Reset to Default (> 60%)
-              </button>
-            </div>
-          </td>
-        </tr>
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div class="col-span-full p-8 text-center glass-card border border-border rounded-xl">
+          <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-brand-green/10 border border-brand-green/30 flex items-center justify-center text-brand-green">
+            <i data-lucide="shield-check" class="w-6 h-6"></i>
+          </div>
+          <div class="font-bold text-sm text-main">Zero Anomalies Exceeding ${this.minProbability}%</div>
+          <div class="text-xs text-muted mt-1 max-w-md mx-auto">
+            All regional hubs are currently below the selected cutoff. Adjust your threshold slider to examine lower risk bands.
+          </div>
+        </div>
       `;
       if (window.lucide) window.lucide.createIcons();
       return;
     }
 
-    tbody.innerHTML = '';
-    this.filteredPredictions.forEach(p => {
-      const isCritical = p.riskScore >= 75;
-      const isHigh = p.riskScore >= 60 && p.riskScore < 75;
+    // Render Top 6 Critical Cards
+    const topThreats = filtered.slice(0, 6);
+    let html = '';
 
-      let badgeClass = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
-      let progressColor = '#2EA043';
-      let severityLabel = 'ELEVATED';
+    topThreats.forEach(p => {
+      const isCritical = p.severity === 'critical';
+      const isHigh = p.severity === 'high';
+      
+      const badgeClass = isCritical 
+        ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+        : (isHigh ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
 
-      if (isCritical) {
-        badgeClass = 'bg-red-500/20 text-red-300 border border-red-500/40 animate-pulse';
-        progressColor = '#F85149';
-        severityLabel = 'CRITICAL';
-      } else if (isHigh) {
-        badgeClass = 'bg-amber-500/20 text-amber-300 border border-amber-500/30';
-        progressColor = '#D29922';
-        severityLabel = 'HIGH RISK';
-      }
+      const progressColor = isCritical ? 'bg-red-500' : (isHigh ? 'bg-amber-400' : 'bg-brand-green');
 
-      const tr = document.createElement('tr');
-      tr.className = 'hover:bg-slate-800/40 transition-colors border-b border-border/40 text-xs';
-      tr.innerHTML = `
-        <!-- ID -->
-        <td class="px-4 py-3.5 font-mono text-xs font-bold text-brand-cyan whitespace-nowrap">
-          ${p.threatCode}
-        </td>
-
-        <!-- Place: City & Region -->
-        <td class="px-4 py-3.5 whitespace-nowrap">
-          <div class="font-bold text-white text-sm flex items-center gap-1.5">
-            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-cyan shrink-0"></i>
-            <span>${p.cityName}</span>
-          </div>
-          <div class="text-[11px] text-slate-400 mt-0.5 ml-5">${p.cityRegion} &bull; <span class="font-mono text-[10px] text-slate-500">${p.cityElevation}</span></div>
-        </td>
-
-        <!-- Hazard Model -->
-        <td class="px-4 py-3.5">
-          <div class="flex items-center gap-2 font-semibold text-slate-100">
-            <div class="p-1.5 rounded-lg bg-card border border-border text-brand-cyan shrink-0">
-              <i data-lucide="${p.icon}" class="w-4 h-4"></i>
+      html += `
+        <div class="glass-card p-5 rounded-2xl border border-border flex flex-col justify-between hover:border-brand-green/60 transition-all relative overflow-hidden group">
+          <!-- Top Tag & Severity -->
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded font-bold bg-card border border-border text-slate-400">
+                ${p.threatCode}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border ${badgeClass}">
+                ${p.severity.toUpperCase()}
+              </span>
             </div>
-            <div class="min-w-0">
-              <div class="truncate font-semibold text-white">${p.name}</div>
-              <div class="text-[10px] text-slate-400 font-mono mt-0.5">${p.predictedWindow}</div>
+
+            <!-- Title & Location -->
+            <div class="flex items-start gap-3 mb-3">
+              <div class="p-2.5 rounded-xl bg-card border border-border text-2xl shrink-0">
+                ${p.hazardIcon}
+              </div>
+              <div>
+                <h4 class="font-bold text-sm text-main group-hover:text-brand-green transition-colors leading-tight">
+                  ${p.hazardName}
+                </h4>
+                <div class="text-xs text-muted mt-0.5 flex items-center gap-1.5 font-medium">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
+                  <span>${p.cityName}</span>
+                  <span class="text-[10px] text-slate-500">(${p.cityRegion})</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Probability Meter -->
+            <div class="my-3 p-3 rounded-xl bg-card/60 border border-border/80">
+              <div class="flex items-center justify-between text-xs mb-1.5 font-mono">
+                <span class="text-muted">Event Probability</span>
+                <span class="font-bold text-main">${p.probability}%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full rounded-full ${progressColor} transition-all duration-500" style="width: ${p.probability}%"></div>
+              </div>
+            </div>
+
+            <!-- Key Metric Reason -->
+            <p class="text-xs text-muted leading-relaxed mb-4">
+              ${p.keyFactor}
+            </p>
+          </div>
+
+          <!-- Actions: Map & Broadcast -->
+          <div class="pt-3 border-t border-border flex items-center justify-between gap-2">
+            <span class="text-[10px] font-mono text-slate-500">${p.confidence}% Confidence</span>
+            <div class="flex items-center gap-1.5">
+              <button onclick="window.DisasterAnalyticsPage.viewOnMap('${p.cityId}')" title="Center on GIS Map" class="px-2.5 py-1.5 rounded-lg bg-card hover:bg-border text-slate-300 border border-border text-[11px] font-medium transition-colors flex items-center gap-1">
+                <i data-lucide="map" class="w-3 h-3"></i>
+                <span>GIS Map</span>
+              </button>
+              <button onclick="window.DisasterAnalyticsPage.prepareBroadcast('${p.cityId}', '${p.cityName}', '${p.hazardName}', ${p.probability})" class="px-3 py-1.5 rounded-lg bg-brand-green hover:bg-brand-greenDark text-white text-[11px] font-bold transition-all shadow-sm flex items-center gap-1">
+                <i data-lucide="radio" class="w-3 h-3"></i>
+                <span>Queue Alert</span>
+              </button>
             </div>
           </div>
-        </td>
-
-        <!-- Severity Badge -->
-        <td class="px-4 py-3.5 whitespace-nowrap">
-          <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
-            ${severityLabel}
-          </span>
-        </td>
-
-        <!-- Probability Score & Gauge -->
-        <td class="px-4 py-3.5 whitespace-nowrap">
-          <div class="flex items-center gap-2">
-            <span class="font-mono text-base font-extrabold text-white">${p.riskScore}%</span>
-            <div class="w-20 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" style="width: ${p.riskScore}%; background-color: ${progressColor};"></div>
-            </div>
-          </div>
-          <div class="text-[10px] text-slate-400 mt-0.5 font-mono">${p.confidence}</div>
-        </td>
-
-        <!-- Telemetry & Action Protocol -->
-        <td class="px-4 py-3.5 text-xs text-slate-300 max-w-xs md:max-w-md leading-relaxed">
-          <div class="font-medium text-slate-200 line-clamp-2">${p.protocol}</div>
-          <div class="text-[10px] font-mono text-brand-cyan mt-1 flex items-center gap-1">
-            <i data-lucide="radio" class="w-3 h-3 text-brand-cyan"></i>
-            <span>${p.keyIndicator}</span>
-          </div>
-        </td>
-
-        <!-- Actions: Map & Broadcast -->
-        <td class="px-4 py-3.5 whitespace-nowrap">
-          <div class="flex items-center gap-2">
-            <button onclick="window.DisasterAnalyticsPage.viewOnMap('${p.cityId}')" title="Center on GIS Map" class="px-2.5 py-1.5 rounded-lg bg-card hover:bg-border text-slate-300 border border-border text-[11px] font-medium transition-colors flex items-center gap-1">
-              <i data-lucide="map" class="w-3 h-3 text-brand-cyan"></i>
-              <span>GIS Map</span>
-            </button>
-            <button onclick="window.DisasterAnalyticsPage.prepareBroadcast('${p.cityId}', '${p.cityName}', '${p.name}', ${p.riskScore})" title="Stage Alert in Approval Queue" class="px-2.5 py-1.5 rounded-lg bg-brand-blue/20 hover:bg-brand-blue/30 text-brand-cyan border border-brand-blue/30 text-[11px] font-medium transition-colors flex items-center gap-1">
-              <i data-lucide="send" class="w-3 h-3"></i>
-              <span>Broadcast</span>
-            </button>
-          </div>
-        </td>
+        </div>
       `;
-      tbody.appendChild(tr);
     });
 
+    container.innerHTML = html;
+    if (window.lucide) window.lucide.createIcons();
+  },
+
+  renderTable(filtered) {
+    const tbody = document.getElementById('disaster-table-body');
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="px-4 py-8 text-center text-slate-400 font-mono text-xs">
+            No threats matching active filters.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    let rows = '';
+    filtered.forEach(p => {
+      const isCritical = p.severity === 'critical';
+      const isHigh = p.severity === 'high';
+      const badgeClass = isCritical 
+        ? 'bg-red-500/20 text-red-400 border-red-500/30' 
+        : (isHigh ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
+
+      rows += `
+        <tr class="hover:bg-card/60 transition-colors border-b border-border/60">
+          <td class="px-4 py-3 font-mono text-xs text-slate-400">${p.threatCode}</td>
+          <td class="px-4 py-3 font-medium text-main flex items-center gap-2">
+            <span>${p.hazardIcon}</span>
+            <span>${p.hazardName}</span>
+          </td>
+          <td class="px-4 py-3 text-xs text-main">
+            <div class="font-semibold">${p.cityName}</div>
+            <div class="text-[10px] text-muted">${p.cityRegion} &bull; ${p.cityElevation}</div>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex items-center gap-2">
+              <span class="font-mono font-bold text-xs text-main">${p.probability}%</span>
+              <div class="w-16 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full rounded-full ${isCritical ? 'bg-red-500' : (isHigh ? 'bg-amber-400' : 'bg-brand-green')}" style="width: ${p.probability}%"></div>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${badgeClass}">
+              ${p.severity.toUpperCase()}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-xs text-muted max-w-xs truncate" title="${p.keyFactor}">
+            ${p.keyFactor}
+          </td>
+          <td class="px-4 py-3 text-right">
+            <div class="flex items-center justify-end gap-1.5">
+              <button onclick="window.DisasterAnalyticsPage.viewOnMap('${p.cityId}')" class="p-1.5 rounded-lg bg-card hover:bg-border text-slate-300 border border-border" title="View on GIS Map">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="window.DisasterAnalyticsPage.prepareBroadcast('${p.cityId}', '${p.cityName}', '${p.hazardName}', ${p.probability})" class="px-2.5 py-1 rounded-lg bg-brand-green/20 hover:bg-brand-green text-brand-green hover:text-white border border-brand-green/30 text-xs font-bold transition-all" title="Draft Emergency Alert">
+                Alert
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rows;
     if (window.lucide) window.lucide.createIcons();
   },
 
@@ -538,15 +521,17 @@ window.DisasterAnalyticsPage = {
         populationAtRisk: Math.floor(25000 + Math.random() * 150000),
         confidence: score,
         channels: ["SMS", "USSD"],
-        smsText: `[NEGARIT EMERGENCY] High disaster risk detected for ${cityName} (${hazardName}, ${score}% probability). Take precautions. Dial *444# for guidance.`,
-        urgency: score >= 75 ? "CRITICAL" : "HIGH"
+        status: "pending_review",
+        timestamp: "Just now",
+        summary: `Automated threat model detected ${hazardName} anomaly with ${score}% predictive probability for ${cityName}. Requesting authorized official clearance.`
       };
 
-      // Add to front of pendingAlerts
-      window.ApprovalQueuePage.pendingAlerts.unshift(newAlert);
-      if (window.App && window.App.showToast) {
-        window.App.showToast(`Emergency alert staged for ${cityName} in Approval Queue!`, 'success');
+      if (!window.ApprovalQueuePage.pendingAlerts) {
+        window.ApprovalQueuePage.pendingAlerts = [];
       }
+      window.ApprovalQueuePage.pendingAlerts.unshift(newAlert);
+
+      window.App.showToast(`Drafted emergency broadcast for ${cityName} to Approval Queue`, 'success');
       window.App.switchTab('approval');
     }
   }

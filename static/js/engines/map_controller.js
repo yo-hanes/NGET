@@ -1,7 +1,7 @@
 /**
- * NEGARIT ET - LEAFLET MAP CONTROLLER
- * Integrates spatial GIS layers, Ethiopian city markers,
- * USGS seismic epicenter indicators, and multi-hazard risk zones.
+ * NEGARIT ET - PAN-AFRICAN LEAFLET MAP CONTROLLER
+ * Integrates spatial GIS layers, multi-country African city markers,
+ * USGS seismic epicenter feeds, and country-specific multi-hazard risk zones.
  */
 
 window.MapController = {
@@ -11,6 +11,7 @@ window.MapController = {
   cityMarkers: [],
   selectedMarker: null,
   onSelectCallback: null,
+  currentCountryCode: 'ethiopia',
 
   init(containerId, onSelectCallback) {
     if (this.map) {
@@ -18,17 +19,20 @@ window.MapController = {
       this.map = null;
     }
 
-    const cfg = window.WeatherAPI.CONFIG.MAP;
+    const activeCountry = window.WeatherAPI.getActiveCountry();
+    this.currentCountryCode = activeCountry.code;
     this.onSelectCallback = onSelectCallback;
 
     const mapElement = document.getElementById(containerId);
     if (!mapElement) return;
 
+    const cfg = window.WeatherAPI.CONFIG.MAP;
+
     this.map = L.map(containerId, {
       zoomControl: true,
-      minZoom: 5,
-      maxZoom: 13
-    }).setView([cfg.INITIAL_LAT, cfg.INITIAL_LON], cfg.INITIAL_ZOOM);
+      minZoom: 4,
+      maxZoom: 14
+    }).setView(activeCountry.center, activeCountry.zoom);
 
     L.tileLayer(cfg.TILE_LAYER, {
       attribution: cfg.ATTRIBUTION,
@@ -38,8 +42,8 @@ window.MapController = {
     this.earthquakeLayerGroup = L.layerGroup().addTo(this.map);
     this.riskZoneLayerGroup = L.layerGroup().addTo(this.map);
 
-    this.renderRiskZones();
-    this.renderCityMarkers(window.WeatherAPI.CONFIG.CITIES);
+    this.renderRiskZones(this.currentCountryCode);
+    this.renderCityMarkers(activeCountry.cities);
 
     this.map.on('click', (e) => {
       this.handleCustomMapClick(e.latlng.lat, e.latlng.lng);
@@ -51,22 +55,41 @@ window.MapController = {
     }, 300);
   },
 
-  renderRiskZones() {
+  switchCountry(countryCode) {
+    const country = window.WeatherAPI.COUNTRIES[countryCode] || window.WeatherAPI.COUNTRIES.ethiopia;
+    this.currentCountryCode = country.code;
+
+    if (!this.map) return;
+
+    if (this.selectedMarker) {
+      this.map.removeLayer(this.selectedMarker);
+      this.selectedMarker = null;
+    }
+
+    // Smoothly fly to the country's center and zoom
+    this.map.flyTo(country.center, country.zoom, { duration: 1.2 });
+
+    // Update risk zones and city markers
+    this.renderRiskZones(country.code);
+    this.renderCityMarkers(country.cities);
+
+    setTimeout(() => {
+      if (this.map) this.map.invalidateSize();
+    }, 300);
+  },
+
+  renderRiskZones(countryCode) {
+    if (!this.riskZoneLayerGroup) return;
     this.riskZoneLayerGroup.clearLayers();
 
-    // Critical Hazard Zones in Ethiopia
-    const zones = [
-      { name: "Tigray Fault Zone", lat: 13.50, lon: 39.47, radius: 85000, color: "#e73b45", fill: "#e73b45", type: "Seismic & Drought Alert" },
-      { name: "Afar Aridity Depression", lat: 11.79, lon: 41.01, radius: 95000, color: "#e59a15", fill: "#e59a15", type: "Severe Aridity Zone" },
-      { name: "Gofa Highlands Slope Watch", lat: 6.30, lon: 36.88, radius: 75000, color: "#e73b45", fill: "#e73b45", type: "Landslide Risk Zone" },
-      { name: "Awash Basin Inundation Corridor", lat: 8.98, lon: 40.15, radius: 80000, color: "#2563eb", fill: "#2563eb", type: "Flash Flood Watch" }
-    ];
+    const zones = window.WeatherAPI.getHazardZones(countryCode);
+    if (!zones || !zones.length) return;
 
     zones.forEach(z => {
       const circle = L.circle([z.lat, z.lon], {
         color: z.color,
         fillColor: z.fill,
-        fillOpacity: 0.15,
+        fillOpacity: 0.18,
         weight: 1.5,
         dashArray: '4, 6',
         radius: z.radius
@@ -81,14 +104,21 @@ window.MapController = {
     });
   },
 
-  renderCityMarkers(cities) {
+  renderCityMarkers(citiesList) {
+    if (!this.map) return;
     this.cityMarkers.forEach(m => this.map.removeLayer(m));
     this.cityMarkers = [];
 
+    const cities = citiesList || window.WeatherAPI.getCities(this.currentCountryCode);
+    const country = window.WeatherAPI.COUNTRIES[this.currentCountryCode] || window.WeatherAPI.COUNTRIES.ethiopia;
+    const isRedTheme = country.theme === 'red';
+    const pinColorClass = isRedTheme ? 'border-red-500' : 'border-[#2CB34A]';
+    const dotColorClass = isRedTheme ? 'bg-red-500' : 'bg-[#2CB34A]';
+
     cities.forEach(city => {
       const iconHtml = `
-        <div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 border-2 border-brand-blue shadow-lg hover:scale-125 transition-transform cursor-pointer">
-          <div class="w-2 h-2 rounded-full bg-brand-blue animate-pulse"></div>
+        <div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 border-2 ${pinColorClass} shadow-lg hover:scale-125 transition-transform cursor-pointer">
+          <div class="w-2 h-2 rounded-full ${dotColorClass} animate-pulse"></div>
         </div>
       `;
 
@@ -133,7 +163,7 @@ window.MapController = {
       const lat = coords[1];
       const mag = f.properties.mag ? f.properties.mag.toFixed(1) : "?.?";
       const title = f.properties.title || "Tectonic Event";
-      const timeStr = new Date(f.properties.time).toLocaleString('en-US', { timeZone: 'Africa/Addis_Ababa' });
+      const timeStr = new Date(f.properties.time).toLocaleString('en-US');
 
       const eqIconHtml = `
         <div class="flex items-center justify-center w-7 h-7 rounded-full bg-purple-600/30 border border-purple-400 animate-ping absolute"></div>
@@ -144,48 +174,57 @@ window.MapController = {
 
       const eqIcon = L.divIcon({
         html: eqIconHtml,
-        className: 'earthquake-pin-icon',
+        className: 'eq-pin-icon',
         iconSize: [28, 28],
         iconAnchor: [14, 14]
       });
 
-      const marker = L.marker([lat, lon], { icon: eqIcon }).addTo(this.earthquakeLayerGroup);
+      const marker = L.marker([lat, lon], { icon: eqIcon });
 
-      marker.bindPopup(`
-        <div class="p-2 font-sans min-w-[200px]">
-          <div class="flex items-center justify-between gap-2 mb-1">
-            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-600/30 text-purple-300 border border-purple-500">M${mag} Earthquake</span>
-            <span class="text-[10px] text-slate-400">${coords[2]} km depth</span>
-          </div>
-          <div class="font-semibold text-xs text-white mb-1">${title}</div>
-          <div class="text-[10px] text-slate-400">EAT: ${timeStr}</div>
+      marker.bindTooltip(`
+        <div class="p-1.5 font-sans">
+          <div class="font-bold text-purple-400 text-xs">Magnitude ${mag} Earthquake</div>
+          <div class="text-[10px] text-slate-200">${title}</div>
+          <div class="text-[9px] text-slate-400 mt-0.5">${timeStr} &bull; Depth: ${coords[2]}km</div>
         </div>
-      `);
+      `, {
+        direction: 'top',
+        offset: [0, -12]
+      });
+
+      this.earthquakeLayerGroup.addLayer(marker);
     });
   },
 
   handleCustomMapClick(lat, lon) {
+    if (!this.map) return;
+
     if (this.selectedMarker) {
       this.map.removeLayer(this.selectedMarker);
     }
 
+    const country = window.WeatherAPI.COUNTRIES[this.currentCountryCode] || window.WeatherAPI.COUNTRIES.ethiopia;
+    const isRedTheme = country.theme === 'red';
+    const clickBorder = isRedTheme ? 'border-red-400' : 'border-[#2CB34A]';
+    const clickBg = isRedTheme ? 'bg-red-500' : 'bg-[#2CB34A]';
+
     const clickIcon = L.divIcon({
       html: `
-        <div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-xl">
-          <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+        <div class="relative flex items-center justify-center w-7 h-7 rounded-full bg-slate-900 border-2 ${clickBorder} shadow-2xl animate-bounce">
+          <div class="w-3 h-3 rounded-full ${clickBg}"></div>
         </div>
       `,
       className: 'custom-pin-icon',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
+      iconSize: [28, 28],
+      iconAnchor: [14, 14]
     });
 
     this.selectedMarker = L.marker([lat, lon], { icon: clickIcon }).addTo(this.map);
 
     const customCity = {
       id: 'custom',
-      name: `Coordinates (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
-      region: 'Custom Map Pin',
+      name: `Pin (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`,
+      region: `${country.name} GIS Telemetry`,
       lat: parseFloat(lat.toFixed(4)),
       lon: parseFloat(lon.toFixed(4)),
       elevation: '~ Regional Elevation'
@@ -201,12 +240,11 @@ window.MapController = {
 
   recenter() {
     if (!this.map) return;
-    const cfg = window.WeatherAPI.CONFIG.MAP;
-    this.map.flyTo([cfg.INITIAL_LAT, cfg.INITIAL_LON], cfg.INITIAL_ZOOM, { duration: 1.0 });
+    const country = window.WeatherAPI.COUNTRIES[this.currentCountryCode] || window.WeatherAPI.COUNTRIES.ethiopia;
+    this.map.flyTo(country.center, country.zoom, { duration: 1.0 });
   },
 
   invalidateSize() {
     if (this.map) this.map.invalidateSize();
   }
 };
-

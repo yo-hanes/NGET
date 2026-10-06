@@ -40,7 +40,7 @@ window.Header = {
         const clearBtn = document.getElementById('btn-search-clear');
         if (!input || !dropdown) return;
 
-        input.placeholder = 'Search Ethiopian cities (e.g. Addis Ababa, Hawassa, Mekelle)...';
+        input.placeholder = 'Search African cities (e.g. Nairobi, Johannesburg, Cairo, Addis Ababa)...';
 
         const renderDropdown = (cities) => {
             dropdown.innerHTML = '';
@@ -56,10 +56,10 @@ window.Header = {
                 item.className = 'w-full px-3 py-2 text-left flex items-center justify-between hover:bg-slate-800/80 transition-colors border-b last:border-b-0 border-border/50 group';
                 item.innerHTML = `
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="map-pin" class="w-4 h-4 text-brand-blue group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm">${city.flag || '📍'}</span>
                         <div>
                             <div class="text-xs font-semibold text-white">${city.name}</div>
-                            <div class="text-[10px] text-slate-400">${city.region || 'Ethiopia'}</div>
+                            <div class="text-[10px] text-slate-400">${city.region || city.countryName || 'Regional Hub'}</div>
                         </div>
                     </div>
                     <div class="text-[10px] font-mono text-slate-500">${city.elevation || ''}</div>
@@ -71,6 +71,11 @@ window.Header = {
                     dropdown.classList.add('hidden');
                     if (clearBtn) clearBtn.classList.remove('hidden');
                     
+                    // Switch country if from a different country
+                    if (city.countryCode && city.countryCode !== window.WeatherAPI.activeCountryCode) {
+                        window.WeatherAPI.setActiveCountry(city.countryCode, true);
+                    }
+
                     // Dispatch location change
                     if (window.MapTelemetryPage) {
                         window.MapTelemetryPage.selectCity(city);

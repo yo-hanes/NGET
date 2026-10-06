@@ -21,6 +21,11 @@ window.Sidebar = {
     init() {
         const nav = document.getElementById('sidebar-nav');
         nav.innerHTML = '';
+
+        // Apply dynamic country theme (green for Ethiopia/Kenya, red for expansion countries)
+        if (window.WeatherAPI) {
+            window.WeatherAPI.applySidebarTheme(window.WeatherAPI.getActiveCountry().theme);
+        }
         
         const allowed = PermissionManager.getAllowedPages();
 
