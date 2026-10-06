@@ -233,8 +233,22 @@ window.DisasterAnalyticsPage = {
           );
 
           preds.forEach(p => {
+            const risk = p.riskScore !== undefined ? p.riskScore : (p.probability || 0);
+            const rawSeverity = p.severity || p.riskLevel || (risk >= 75 ? 'critical' : (risk >= 45 ? 'high' : 'low'));
+            const normSeverity = String(rawSeverity).toLowerCase().includes('crit') ? 'critical' :
+                                 (String(rawSeverity).toLowerCase().includes('high') || String(rawSeverity).toLowerCase().includes('elev') ? 'high' : 'low');
+
             allResults.push({
               ...p,
+              id: p.id,
+              hazardCategory: p.id || p.hazardCategory || 'all',
+              hazardName: p.name || p.hazardName || 'Climate Anomaly',
+              hazardIcon: p.icon || p.hazardIcon || 'alert-triangle',
+              riskScore: risk,
+              probability: risk,
+              severity: normSeverity,
+              keyFactor: p.keyIndicator || p.keyFactor || p.protocol || 'Multivariate anomaly detected',
+              confidenceDisplay: typeof p.confidence === 'string' && p.confidence.includes('%') ? p.confidence : `${p.confidence || 85}%`,
               cityId: city.id,
               cityName: city.name,
               cityRegion: city.region,
@@ -357,6 +371,7 @@ window.DisasterAnalyticsPage = {
     topThreats.forEach(p => {
       const isCritical = p.severity === 'critical';
       const isHigh = p.severity === 'high';
+      const sevDisplay = (p.severity || 'low').toUpperCase();
       
       const badgeClass = isCritical 
         ? 'bg-red-500/20 text-red-400 border-red-500/30' 
@@ -373,14 +388,14 @@ window.DisasterAnalyticsPage = {
                 ${p.threatCode}
               </span>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border ${badgeClass}">
-                ${p.severity.toUpperCase()}
+                ${sevDisplay}
               </span>
             </div>
 
             <!-- Title & Location -->
             <div class="flex items-start gap-3 mb-3">
-              <div class="p-2.5 rounded-xl bg-card border border-border text-2xl shrink-0">
-                ${p.hazardIcon}
+              <div class="p-2.5 rounded-xl bg-card border border-border text-brand-green shrink-0 flex items-center justify-center">
+                <i data-lucide="${p.hazardIcon || 'alert-triangle'}" class="w-6 h-6"></i>
               </div>
               <div>
                 <h4 class="font-bold text-sm text-main group-hover:text-brand-green transition-colors leading-tight">
@@ -413,7 +428,7 @@ window.DisasterAnalyticsPage = {
 
           <!-- Actions: Map & Broadcast -->
           <div class="pt-3 border-t border-border flex items-center justify-between gap-2">
-            <span class="text-[10px] font-mono text-slate-500">${p.confidence}% Confidence</span>
+            <span class="text-[10px] font-mono text-slate-500">${p.confidenceDisplay || '85% Confidence'}</span>
             <div class="flex items-center gap-1.5">
               <button onclick="window.DisasterAnalyticsPage.viewOnMap('${p.cityId}')" title="Center on GIS Map" class="px-2.5 py-1.5 rounded-lg bg-card hover:bg-border text-slate-300 border border-border text-[11px] font-medium transition-colors flex items-center gap-1">
                 <i data-lucide="map" class="w-3 h-3"></i>
@@ -452,6 +467,7 @@ window.DisasterAnalyticsPage = {
     filtered.forEach(p => {
       const isCritical = p.severity === 'critical';
       const isHigh = p.severity === 'high';
+      const sevDisplay = (p.severity || 'low').toUpperCase();
       const badgeClass = isCritical 
         ? 'bg-red-500/20 text-red-400 border-red-500/30' 
         : (isHigh ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
@@ -460,7 +476,7 @@ window.DisasterAnalyticsPage = {
         <tr class="hover:bg-card/60 transition-colors border-b border-border/60">
           <td class="px-4 py-3 font-mono text-xs text-slate-400">${p.threatCode}</td>
           <td class="px-4 py-3 font-medium text-main flex items-center gap-2">
-            <span>${p.hazardIcon}</span>
+            <i data-lucide="${p.hazardIcon || 'alert-triangle'}" class="w-4 h-4 text-brand-green shrink-0"></i>
             <span>${p.hazardName}</span>
           </td>
           <td class="px-4 py-3 text-xs text-main">
@@ -477,7 +493,7 @@ window.DisasterAnalyticsPage = {
           </td>
           <td class="px-4 py-3">
             <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${badgeClass}">
-              ${p.severity.toUpperCase()}
+              ${sevDisplay}
             </span>
           </td>
           <td class="px-4 py-3 text-xs text-muted max-w-xs truncate" title="${p.keyFactor}">

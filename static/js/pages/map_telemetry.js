@@ -288,8 +288,9 @@ window.MapTelemetryPage = {
         city.name
       );
       if (preds && preds.length > 0) {
-        topHazard = preds[0];
-        highestProb = topHazard.probability;
+        const sorted = [...preds].sort((a, b) => (b.riskScore !== undefined ? b.riskScore : (b.probability || 0)) - (a.riskScore !== undefined ? a.riskScore : (a.probability || 0)));
+        topHazard = sorted[0];
+        highestProb = topHazard.riskScore !== undefined ? topHazard.riskScore : (topHazard.probability || 0);
       }
     }
 
@@ -297,18 +298,22 @@ window.MapTelemetryPage = {
       summaryTitle.textContent = `${city.name} • Predictive Summary`;
     }
 
+    const hazardSeverity = (topHazard?.severity || topHazard?.riskLevel || 'ELEVATED').toUpperCase();
+    const hazardName = topHazard?.hazardName || topHazard?.name || 'Climate Anomaly';
+    const hazardDesc = topHazard?.keyIndicator || topHazard?.description || 'Elevated climate anomalies detected';
+
     if (topHazard && highestProb >= 60) {
       if (summaryBadge) {
         summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-red/15 text-brand-red border border-brand-red/30 animate-pulse';
-        summaryBadge.textContent = `${highestProb}% ${topHazard.severity.toUpperCase()} RISK`;
+        summaryBadge.textContent = `${highestProb}% ${hazardSeverity} RISK`;
       }
-      summaryText.textContent = `High Alert: ${topHazard.hazardName} model is flagging a ${highestProb}% event probability across ${city.name} (${topHazard.description || 'Elevated climate anomalies detected'}). Recommended immediate woreda readiness.`;
+      summaryText.textContent = `High Alert: ${hazardName} model is flagging a ${highestProb}% event probability across ${city.name} (${hazardDesc}). Recommended immediate regional readiness.`;
     } else if (topHazard && highestProb >= 35) {
       if (summaryBadge) {
         summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30';
         summaryBadge.textContent = `${highestProb}% MODERATE`;
       }
-      summaryText.textContent = `Elevated Watch: ${topHazard.hazardName} indicates ${highestProb}% likelihood for ${city.name}. Meteorological parameters remain within observation limits with normal soil saturation.`;
+      summaryText.textContent = `Elevated Watch: ${hazardName} indicates ${highestProb}% likelihood for ${city.name}. Meteorological parameters remain within observation limits with normal soil saturation.`;
     } else {
       if (summaryBadge) {
         summaryBadge.className = 'px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-green/15 text-brand-green border border-brand-green/30';
