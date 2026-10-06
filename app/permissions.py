@@ -31,19 +31,26 @@ ROLE_COLORS = {
 
 # Default matrix based on spec
 DEFAULT_PERMISSIONS_MATRIX = {
-    'community_reporter': {
-        'overview': True, 'map': True, 'community': True, 'donations': True, 'reports': True, 'mini_apps': True,
-        'disaster_analytics': False, 'approval': False, 'dispatch': False, 'resources': False, 'model_tester': False, 'user_management': False, 'activity_logs': False
-    },
-    'agency_operator': {
-        'overview': True, 'map': True, 'dispatch': True, 'resources': True, 'community': True, 'donations': True, 'reports': True, 'mini_apps': True,
-        'disaster_analytics': False, 'approval': False, 'model_tester': False, 'user_management': False, 'activity_logs': False
+    'super_admin': {
+        'overview': True, 'map': True, 'disaster_analytics': True, 'approval': True, 'dispatch': True,
+        'resources': False, 'community': True, 'donations': True, 'reports': True, 'model_tester': False,
+        'mini_apps': True, 'user_management': True, 'activity_logs': True
     },
     'government_official': {
-        'overview': True, 'map': True, 'disaster_analytics': True, 'approval': True, 'dispatch': True, 'resources': True, 'community': True, 'donations': True, 'reports': True, 'model_tester': True, 'mini_apps': True,
-        'user_management': False, 'activity_logs': False
+        'overview': True, 'map': True, 'disaster_analytics': True, 'approval': True, 'dispatch': False,
+        'resources': False, 'community': False, 'donations': True, 'reports': False, 'model_tester': False,
+        'mini_apps': True, 'user_management': False, 'activity_logs': False
     },
-    'super_admin': { k: True for k in ALL_PAGE_KEYS }
+    'agency_operator': {
+        'overview': True, 'map': True, 'disaster_analytics': True, 'approval': False, 'dispatch': True,
+        'resources': False, 'community': False, 'donations': True, 'reports': False, 'model_tester': False,
+        'mini_apps': True, 'user_management': False, 'activity_logs': False
+    },
+    'community_reporter': {
+        'overview': True, 'map': True, 'disaster_analytics': True, 'approval': False, 'dispatch': False,
+        'resources': False, 'community': False, 'donations': True, 'reports': False, 'model_tester': False,
+        'mini_apps': True, 'user_management': False, 'activity_logs': False
+    }
 }
 
 async def get_user_permissions(db, role: str) -> list[str]:
