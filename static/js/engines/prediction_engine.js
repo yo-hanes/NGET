@@ -247,7 +247,7 @@ window.DisasterPredictionEngine = {
       seismicScore = 48;
       seismicStatus = 'LIGHT RIFT ACTIVITY';
     } else {
-      const isRiftZone = locationName ? /hawassa|semera|afar|adama|dire dawa|sawla|ankober/i.test(locationName) : false;
+      const isRiftZone = locationName ? /hawassa|semera|afar|adama|dire dawa|sawla|ankober|shashamane|bishoftu|sodo|dilla/i.test(locationName) : false;
       seismicScore = isRiftZone ? 64 : 20;
       seismicStatus = isRiftZone ? 'ELEVATED RIFT FAULT MONITOR' : 'LOW SEISMIC ACTIVITY';
     }
