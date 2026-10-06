@@ -298,7 +298,10 @@ window.UserManagementPage = {
         modal.innerHTML = `
             <div class="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
                 <div class="p-4 border-b border-border flex justify-between items-center bg-card/60">
-                    <h3 class="font-semibold text-main">Add New User</h3>
+                    <div class="flex items-center gap-2.5">
+                        <img src="/static/icons/android-chrome-192x192.png" alt="Negarit Logo" class="w-8 h-8 rounded-lg object-contain shadow-sm border border-border">
+                        <h3 class="font-semibold text-main">Add New User</h3>
+                    </div>
                     <button class="text-muted hover:text-main transition-colors" onclick="document.getElementById('user-modal').classList.add('hidden')">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
