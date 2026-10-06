@@ -1,0 +1,13 @@
+!NEGARIT-Disaster-Intelligence-Lab1.2.0"ai.negarit.disaster(2@NEGARIT Highland Mountain Slope & Shear Failure Model (ONNX v17):Š
+:
+slope_shear_featuresdense_1_outrelu_activation"Relu
+F
+dense_1_outlandslide_risk_scorerisk_probability_sigmoid"Sigmoidlandslide_risk_modelR@NEGARIT Highland Mountain Slope & Shear Failure Model (ONNX v17)ZO
+slope_shear_features
+
+batch
+"Input environmental feature vectorb[
+landslide_risk_score
+
+batch
+.Predicted anomaly risk probability [0.0 - 1.0]B

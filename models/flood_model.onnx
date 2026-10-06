@@ -1,0 +1,13 @@
+!NEGARIT-Disaster-Intelligence-Lab1.2.0"ai.negarit.disaster(2BNEGARIT Flash Flood & Basin Inundation Prediction Model (ONNX v17):’
+C
+runoff_and_catchment_featuresdense_1_outrelu_activation"Relu
+B
+dense_1_outflood_risk_scorerisk_probability_sigmoid"Sigmoidflood_risk_modelRBNEGARIT Flash Flood & Basin Inundation Prediction Model (ONNX v17)ZX
+runoff_and_catchment_features
+
+batch
+"Input environmental feature vectorbW
+flood_risk_score
+
+batch
+.Predicted anomaly risk probability [0.0 - 1.0]B

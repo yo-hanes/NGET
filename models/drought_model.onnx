@@ -1,0 +1,13 @@
+!NEGARIT-Disaster-Intelligence-Lab1.2.0"ai.negarit.disaster(2BNEGARIT Drought & Agricultural Aridity Prediction Model (ONNX v17):Ž
+>
+soil_and_precip_featuresdense_1_outrelu_activation"Relu
+D
+dense_1_outdrought_risk_scorerisk_probability_sigmoid"Sigmoiddrought_risk_modelRBNEGARIT Drought & Agricultural Aridity Prediction Model (ONNX v17)ZS
+soil_and_precip_features
+
+batch
+"Input environmental feature vectorbY
+drought_risk_score
+
+batch
+.Predicted anomaly risk probability [0.0 - 1.0]B

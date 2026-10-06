@@ -1,0 +1,13 @@
+!NEGARIT-Disaster-Intelligence-Lab1.2.0"ai.negarit.disaster(2BNEGARIT Seismic Activity & Tectonic Fault Anomaly Model (ONNX v17):“
+<
+seismic_fault_featuresdense_1_outrelu_activation"Relu
+G
+dense_1_outearthquake_risk_scorerisk_probability_sigmoid"Sigmoidearthquake_risk_modelRBNEGARIT Seismic Activity & Tectonic Fault Anomaly Model (ONNX v17)ZQ
+seismic_fault_features
+
+batch
+"Input environmental feature vectorb\
+earthquake_risk_score
+
+batch
+.Predicted anomaly risk probability [0.0 - 1.0]B

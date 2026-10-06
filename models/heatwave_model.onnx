@@ -1,0 +1,13 @@
+!NEGARIT-Disaster-Intelligence-Lab1.2.0"ai.negarit.disaster(2BNEGARIT Thermal Stress & Evapotranspiration Spike Model (ONNX v17):“
+?
+thermal_humidity_featuresdense_1_outrelu_activation"Relu
+E
+dense_1_outheatwave_risk_scorerisk_probability_sigmoid"Sigmoidheatwave_risk_modelRBNEGARIT Thermal Stress & Evapotranspiration Spike Model (ONNX v17)ZT
+thermal_humidity_features
+
+batch
+"Input environmental feature vectorbZ
+heatwave_risk_score
+
+batch
+.Predicted anomaly risk probability [0.0 - 1.0]B
