@@ -38,7 +38,7 @@ window.Sidebar = {
             btn.innerHTML = `
                 <i data-lucide="${overviewPage.icon}" class="w-4 h-4"></i>
                 <span class="flex-1 text-left truncate">${overviewPage.label}</span>
-                <span class="badge-count hidden bg-white/20 text-white px-1.5 py-0.5 rounded text-[10px] font-bold"></span>
+                <span class="badge-count hidden px-1.5 py-0.5 rounded text-[10px] font-bold"></span>
             `;
             btn.addEventListener('click', () => {
                 window.App.switchTab('overview');
@@ -65,7 +65,7 @@ window.Sidebar = {
             if (!items || items.length === 0) return;
             
             const secHeader = document.createElement('div');
-            secHeader.className = 'text-[10px] font-bold text-white/70 uppercase tracking-wider px-3 mt-3 mb-2';
+            secHeader.className = 'text-[10px] font-bold text-muted uppercase tracking-wider px-3 mt-3 mb-2';
             secHeader.textContent = secName;
             nav.appendChild(secHeader);
             
@@ -76,7 +76,7 @@ window.Sidebar = {
                 btn.innerHTML = `
                     <i data-lucide="${item.icon}" class="w-4 h-4"></i>
                     <span class="flex-1 text-left truncate">${item.label}</span>
-                    <span class="badge-count hidden bg-white/20 text-white px-1.5 py-0.5 rounded text-[10px] font-bold"></span>
+                    <span class="badge-count hidden px-1.5 py-0.5 rounded text-[10px] font-bold"></span>
                 `;
                 btn.addEventListener('click', () => {
                     window.App.switchTab(item.key);

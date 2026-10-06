@@ -152,50 +152,17 @@ body {
 }
 
 .bg-sidebar, #app-sidebar {
-    background: linear-gradient(180deg, #2CB34A 0%, #23953C 100%) !important;
-    border-right: 1px solid rgba(0, 0, 0, 0.12) !important;
-    box-shadow: 4px 0 24px -4px rgba(44, 179, 74, 0.25);
+    background: var(--layer1-bg) !important;
+    backdrop-filter: var(--layer1-blur);
+    -webkit-backdrop-filter: var(--layer1-blur);
+    border-right: 1px solid var(--border-hairline) !important;
+    box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04);
 }
 
 html.dark .bg-sidebar, html.dark #app-sidebar {
-    background: linear-gradient(180deg, #249A3E 0%, #1A702D 100%) !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 4px 0 24px -4px rgba(0, 0, 0, 0.4);
-}
-
-/* Pan-African Dynamic Country Theme (Red Theme for Regional Expansion Nations) */
-#app-sidebar.theme-red,
-.country-theme-red #app-sidebar {
-    background: linear-gradient(180deg, #EF373E 0%, #C52228 100%) !important;
-    box-shadow: 4px 0 24px -4px rgba(239, 55, 62, 0.35) !important;
-}
-
-html.dark #app-sidebar.theme-red,
-html.dark .country-theme-red #app-sidebar {
-    background: linear-gradient(180deg, #D7262D 0%, #8E161B 100%) !important;
-    box-shadow: 4px 0 24px -4px rgba(0, 0, 0, 0.5) !important;
-}
-
-#app-sidebar.theme-red .sidebar-tab-btn.active-tab,
-html.dark #app-sidebar.theme-red .sidebar-tab-btn.active-tab,
-.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab,
-html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab {
-    color: #DC2626 !important;
-    background-color: #FFFFFF !important;
-    border-color: #FFFFFF !important;
-}
-
-#app-sidebar.theme-red .sidebar-tab-btn.active-tab i,
-html.dark #app-sidebar.theme-red .sidebar-tab-btn.active-tab i,
-.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i,
-html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i {
-    color: #DC2626 !important;
-}
-
-#app-sidebar.theme-red .sidebar-tab-btn.active-tab .badge-count,
-.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab .badge-count {
-    background-color: rgba(239, 55, 62, 0.16) !important;
-    color: #DC2626 !important;
+    background: var(--layer1-bg) !important;
+    border-right: 1px solid var(--border-hairline) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.35);
 }
 
 .bg-header, #app-header {
@@ -256,7 +223,7 @@ html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i {
     gap: 0.75rem;
     padding: 0.55rem 0.75rem;
     border-radius: var(--radius-sm);
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--text-muted) !important;
     font-size: 0.8125rem;
     font-weight: 500;
     transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
@@ -268,37 +235,77 @@ html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i {
 }
 
 .sidebar-tab-btn i {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--text-muted);
+    transition: color 0.15s ease;
 }
 
+/* Green Theme (Default - Ethiopia & Kenya): Hover */
 .sidebar-tab-btn:hover {
-    color: #FFFFFF !important;
-    background-color: rgba(255, 255, 255, 0.18) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: var(--brand-green) !important;
+    background-color: rgba(44, 179, 74, 0.08) !important;
+    border-color: rgba(44, 179, 74, 0.22) !important;
 }
 
 .sidebar-tab-btn:hover i {
-    color: #FFFFFF !important;
+    color: var(--brand-green) !important;
 }
 
-/* Active Tab: Crisp Pure White Card on Emerald Sidebar */
+/* Green Theme: Active Tab */
 .sidebar-tab-btn.active-tab,
 html.dark .sidebar-tab-btn.active-tab {
-    color: #1E8235 !important;
-    background-color: #FFFFFF !important;
-    border: 1px solid #FFFFFF !important;
-    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.22) !important;
+    color: #FFFFFF !important;
+    background-color: var(--brand-green) !important;
+    border: 1px solid var(--brand-green) !important;
+    box-shadow: 0 4px 14px -2px rgba(44, 179, 74, 0.45) !important;
     font-weight: 700 !important;
 }
 
 .sidebar-tab-btn.active-tab i,
 html.dark .sidebar-tab-btn.active-tab i {
-    color: #1E8235 !important;
+    color: #FFFFFF !important;
 }
 
 .sidebar-tab-btn.active-tab .badge-count {
-    background-color: rgba(44, 179, 74, 0.16) !important;
-    color: #1E8235 !important;
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: #FFFFFF !important;
+}
+
+/* Red Theme (Regional Expansion Nations): Hover */
+#app-sidebar.theme-red .sidebar-tab-btn:hover,
+.country-theme-red #app-sidebar .sidebar-tab-btn:hover {
+    color: var(--brand-red) !important;
+    background-color: rgba(239, 55, 62, 0.08) !important;
+    border-color: rgba(239, 55, 62, 0.22) !important;
+}
+
+#app-sidebar.theme-red .sidebar-tab-btn:hover i,
+.country-theme-red #app-sidebar .sidebar-tab-btn:hover i {
+    color: var(--brand-red) !important;
+}
+
+/* Red Theme: Active Tab */
+#app-sidebar.theme-red .sidebar-tab-btn.active-tab,
+html.dark #app-sidebar.theme-red .sidebar-tab-btn.active-tab,
+.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab,
+html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab {
+    color: #FFFFFF !important;
+    background-color: var(--brand-red) !important;
+    border: 1px solid var(--brand-red) !important;
+    box-shadow: 0 4px 14px -2px rgba(239, 55, 62, 0.45) !important;
+    font-weight: 700 !important;
+}
+
+#app-sidebar.theme-red .sidebar-tab-btn.active-tab i,
+html.dark #app-sidebar.theme-red .sidebar-tab-btn.active-tab i,
+.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i,
+html.dark .country-theme-red #app-sidebar .sidebar-tab-btn.active-tab i {
+    color: #FFFFFF !important;
+}
+
+#app-sidebar.theme-red .sidebar-tab-btn.active-tab .badge-count,
+.country-theme-red #app-sidebar .sidebar-tab-btn.active-tab .badge-count {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: #FFFFFF !important;
 }
 
 .sidebar-tab-btn.active-tab::before {
@@ -306,11 +313,11 @@ html.dark .sidebar-tab-btn.active-tab i {
 }
 
 #app-sidebar .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.25) !important;
+    background-color: var(--border-hairline) !important;
 }
 
 #app-sidebar .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.45) !important;
+    background-color: var(--text-subtle) !important;
 }
 
 /* ==========================================================================
