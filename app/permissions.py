@@ -47,7 +47,7 @@ DEFAULT_PERMISSIONS_MATRIX = {
         'mini_apps': True, 'user_management': False, 'activity_logs': False
     },
     'community_reporter': {
-        'overview': True, 'map': True, 'disaster_analytics': True, 'approval': False, 'dispatch': False,
+        'overview': True, 'map': True, 'disaster_analytics': False, 'approval': False, 'dispatch': False,
         'resources': False, 'community': False, 'donations': True, 'reports': False, 'model_tester': False,
         'mini_apps': True, 'user_management': False, 'activity_logs': False
     }
