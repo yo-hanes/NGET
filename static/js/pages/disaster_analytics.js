@@ -193,7 +193,7 @@ window.DisasterAnalyticsPage = {
     if (tbody) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="7" class="px-4 py-12 text-center text-slate-400">
+          <td colspan="8" class="px-4 py-12 text-center text-slate-400">
             <div class="flex flex-col items-center justify-center gap-3">
               <div class="w-7 h-7 border-2 border-brand-green border-t-transparent rounded-full animate-spin"></div>
               <div class="text-xs font-mono">Running multivariate disaster risk radar across all ${cities.length} ${country.name} hubs...</div>
@@ -271,7 +271,7 @@ window.DisasterAnalyticsPage = {
     } catch (err) {
       console.error("Failed to load regional predictions:", err);
       if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-red-400">Failed to calculate threat matrix: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-red-400">Failed to calculate threat matrix: ${err.message}</td></tr>`;
       }
     } finally {
       this.isLoading = false;
@@ -406,6 +406,10 @@ window.DisasterAnalyticsPage = {
                   <span>${p.cityName}</span>
                   <span class="text-[10px] text-slate-500">(${p.cityRegion})</span>
                 </div>
+                <div class="text-[11px] font-mono text-brand-green mt-1 flex items-center gap-1.5">
+                  <i data-lucide="clock" class="w-3 h-3 text-brand-green shrink-0"></i>
+                  <span>${p.predictedDate || 'Immediate'}</span>
+                </div>
               </div>
             </div>
 
@@ -455,7 +459,7 @@ window.DisasterAnalyticsPage = {
     if (filtered.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="7" class="px-4 py-8 text-center text-slate-400 font-mono text-xs">
+          <td colspan="8" class="px-4 py-8 text-center text-slate-400 font-mono text-xs">
             No threats matching active filters.
           </td>
         </tr>
@@ -482,6 +486,13 @@ window.DisasterAnalyticsPage = {
           <td class="px-4 py-3 text-xs text-main">
             <div class="font-semibold">${p.cityName}</div>
             <div class="text-[10px] text-muted">${p.cityRegion} &bull; ${p.cityElevation}</div>
+          </td>
+          <td class="px-4 py-3 text-xs">
+            <div class="font-medium text-main flex items-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-green shrink-0"></i>
+              <span>${p.predictedDate || 'Immediate'}</span>
+            </div>
+            ${p.predictedWindow ? `<div class="text-[10px] text-muted truncate max-w-[170px] mt-0.5" title="${p.predictedWindow}">${p.predictedWindow}</div>` : ''}
           </td>
           <td class="px-4 py-3">
             <div class="flex items-center gap-2">
